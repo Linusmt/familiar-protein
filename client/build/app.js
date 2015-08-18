@@ -23653,7 +23653,8 @@
 	    return {
 	      result: '',
 	      solved: false,
-	      hintNo: 0
+	      hintNo: -1, 
+	      showHint: false
 	    };
 	  },
 
@@ -23679,15 +23680,20 @@
 	    var question = this.props.questions[this.props.params.qNumber - 1];
 	    var hNumber = this.state.hintNo
 	    var hint = question['hints'][hNumber] || question['hints'][question['hints'].length - 1]
-	    this.setState({ 
-	      hintNo: hNumber+1
-	    })
 	    
 	    return (
 	     React.createElement("p", {key: hint, className: "displayedHint"}, hint)
 	    )
 	 
 
+	  },
+
+	  countHint: function(){ 
+	    var temp = this.state.hintNo
+	    this.setState({ 
+	      hintNo: temp+1, 
+	      showHint: true
+	    })
 	  },
 
 	  displayTestCases: function(string, condition) {
@@ -23764,11 +23770,14 @@
 	          React.createElement("span", {className: "solution"}, "/", React.createElement("textarea", {ref: "solutionText", onChange: this.setRegex, rows: "1", cols: "50", type: "text", className: "regex form-control", placeholder: "Regex solution..."}), "/"), 
 
 	          this.state.solved === null ? React.createElement("p", {className: "error-msg"}, "Please provide valid regular expression") : null, 
-	          this.state.solved ? React.createElement("h3", {className: "success"}, "Success!!! Solved All Test Cases!") : null, 
+	          this.state.solved ? React.createElement("h3", {className: "success"}, "Success!!! Solved All Test Cases!") : null
 
-	          React.createElement("div", {className: "btn btn-primary hints", onClick: this.displayHint}, "Hint")
 	        ), 
-
+	        React.createElement("div", {className: "text-center"}, 
+	          React.createElement("div", {className: "btn btn-primary hints", onClick: this.countHint}, "Hint"), 
+	          React.createElement("p", null), 
+	          this.state.showHint ? this.displayHint() : null
+	        ), 
 	        React.createElement("div", {className: "test-cases"}, 
 
 	          React.createElement("p", {className: "instruction"}, 'Make all words turn green to complete the challenge'), 
