@@ -185,7 +185,6 @@ var Timer = React.createClass({
       seconds = '0'+ seconds;
     }
 
-
     return (
       <div>Time Elapsed: {minutes}:{seconds}</div>
     );

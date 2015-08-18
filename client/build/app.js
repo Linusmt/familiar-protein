@@ -23859,7 +23859,6 @@
 	      seconds = '0'+ seconds;
 	    }
 
-
 	    return (
 	      React.createElement("div", null, "Time Elapsed: ", minutes, ":", seconds)
 	    );
