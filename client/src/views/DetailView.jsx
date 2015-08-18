@@ -81,7 +81,6 @@ var DetailView = React.createClass({
       this.transitionTo('/');
     }
 
-
     // makes sure that the questions are loaded from the database before rendering the view
     try {
       question.title;
@@ -95,6 +94,7 @@ var DetailView = React.createClass({
           <div className="col-sm-10">
             <h2>{question.title}</h2>
             <p>{question.description}</p>
+            <Timer stop={this.state.solved} />
           </div>
 
           <div className="col-sm-2">
@@ -124,6 +124,44 @@ var DetailView = React.createClass({
         </div>
       </div>
     )
+  }
+});
+
+var Timer = React.createClass({
+  getInitialState: function() {
+    return {secondsElapsed: 0};
+  },
+  tick: function() {
+    if(this.props.stop === true) {
+      clearInterval(this.interval);  
+    } else {
+      this.setState({secondsElapsed: this.state.secondsElapsed + 1});
+    }
+  },
+  componentDidMount: function() {
+    this.interval = setInterval(this.tick, 1000);
+      },
+  componentWillUnmount: function() {
+    clearInterval(this.interval);
+  },
+  render: function() {
+    var time = new Date(0);
+    time.setSeconds(this.state.secondsElapsed);
+
+    var minutes = time.getMinutes();
+    var seconds = time.getSeconds();
+
+    if(minutes < 10) {
+      minutes = '0' + minutes;
+    }
+    if(seconds < 10) {
+      seconds = '0'+ seconds;
+    }
+
+
+    return (
+      <div>Time Elapsed: {minutes}:{seconds}</div>
+    );
   }
 });
 
