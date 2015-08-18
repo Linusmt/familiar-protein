@@ -23653,6 +23653,7 @@
 	    return {
 	      result: '',
 	      solved: false,
+	      hintNo: 0
 	    };
 	  },
 
@@ -23674,6 +23675,21 @@
 	    }
 	  },
 
+	  displayHint: function(){ 
+	    var question = this.props.questions[this.props.params.qNumber - 1];
+	    var hNumber = this.state.hintNo
+	    var hint = question['hints'][hNumber] || question['hints'][question['hints'].length - 1]
+	    this.setState({ 
+	      hintNo: hNumber+1
+	    })
+	    
+	    return (
+	     React.createElement("p", {key: hint, className: "displayedHint"}, hint)
+	    )
+	 
+
+	  },
+
 	  displayTestCases: function(string, condition) {
 	    var question = this.props.questions[this.props.params.qNumber - 1];
 	    return question[string].map(function(testCase) {
@@ -23683,6 +23699,7 @@
 	    }.bind(this));
 	  },
 
+	  //TODO: Impliment "next" button or automatically return to menu after question is solved
 	  returnToMenu: function() {
 	    this.setState({
 	      result: '',
@@ -23747,7 +23764,9 @@
 	          React.createElement("span", {className: "solution"}, "/", React.createElement("textarea", {ref: "solutionText", onChange: this.setRegex, rows: "1", cols: "50", type: "text", className: "regex form-control", placeholder: "Regex solution..."}), "/"), 
 
 	          this.state.solved === null ? React.createElement("p", {className: "error-msg"}, "Please provide valid regular expression") : null, 
-	          this.state.solved ? React.createElement("h3", {className: "success"}, "Success!!! Solved All Test Cases!") : null
+	          this.state.solved ? React.createElement("h3", {className: "success"}, "Success!!! Solved All Test Cases!") : null, 
+
+	          React.createElement("div", {className: "btn btn-primary hints", onClick: this.displayHint}, "Hint")
 	        ), 
 
 	        React.createElement("div", {className: "test-cases"}, 

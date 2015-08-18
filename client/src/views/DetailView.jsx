@@ -12,6 +12,7 @@ var DetailView = React.createClass({
     return {
       result: '',
       solved: false,
+      hintNo: 0
     };
   },
 
@@ -33,6 +34,21 @@ var DetailView = React.createClass({
     }
   },
 
+  displayHint: function(){ 
+    var question = this.props.questions[this.props.params.qNumber - 1];
+    var hNumber = this.state.hintNo
+    var hint = question['hints'][hNumber] || question['hints'][question['hints'].length - 1]
+    this.setState({ 
+      hintNo: hNumber+1
+    })
+    
+    return (
+     <p key={hint} className='displayedHint'>{hint}</p>
+    )
+ 
+
+  },
+
   displayTestCases: function(string, condition) {
     var question = this.props.questions[this.props.params.qNumber - 1];
     return question[string].map(function(testCase) {
@@ -42,6 +58,7 @@ var DetailView = React.createClass({
     }.bind(this));
   },
 
+  //TODO: Impliment "next" button or automatically return to menu after question is solved
   returnToMenu: function() {
     this.setState({
       result: '',
@@ -107,6 +124,8 @@ var DetailView = React.createClass({
 
           {this.state.solved === null ? <p className="error-msg">Please provide valid regular expression</p> : null}
           {this.state.solved ? <h3 className="success">Success!!! Solved All Test Cases!</h3> : null}
+
+          <div className='btn btn-primary hints' onClick={this.displayHint}>Hint</div>
         </form>
 
         <div className="test-cases">
