@@ -102,7 +102,8 @@
 	);
 
 	Router.run(routes, function(Root){
-	  React.render(React.createElement(Root, null), document.body);
+	  React.
+	  render(React.createElement(Root, null), document.body);
 	});
 
 
@@ -23715,7 +23716,6 @@
 	      this.transitionTo('/');
 	    }
 
-
 	    // makes sure that the questions are loaded from the database before rendering the view
 	    try {
 	      question.title;
@@ -23728,7 +23728,8 @@
 	        React.createElement("div", {className: "row"}, 
 	          React.createElement("div", {className: "col-sm-10"}, 
 	            React.createElement("h2", null, question.title), 
-	            React.createElement("p", null, question.description)
+	            React.createElement("p", null, question.description), 
+	            React.createElement(Timer, {stop: this.state.solved})
 	          ), 
 
 	          React.createElement("div", {className: "col-sm-2"}, 
@@ -23758,6 +23759,44 @@
 	        )
 	      )
 	    )
+	  }
+	});
+
+	var Timer = React.createClass({displayName: "Timer",
+	  getInitialState: function() {
+	    return {secondsElapsed: 0};
+	  },
+	  tick: function() {
+	    if(this.props.stop === true) {
+	      clearInterval(this.interval);  
+	    } else {
+	      this.setState({secondsElapsed: this.state.secondsElapsed + 1});
+	    }
+	  },
+	  componentDidMount: function() {
+	    this.interval = setInterval(this.tick, 1000);
+	      },
+	  componentWillUnmount: function() {
+	    clearInterval(this.interval);
+	  },
+	  render: function() {
+	    var time = new Date(0);
+	    time.setSeconds(this.state.secondsElapsed);
+
+	    var minutes = time.getMinutes();
+	    var seconds = time.getSeconds();
+
+	    if(minutes < 10) {
+	      minutes = '0' + minutes;
+	    }
+	    if(seconds < 10) {
+	      seconds = '0'+ seconds;
+	    }
+
+
+	    return (
+	      React.createElement("div", null, "Time Elapsed: ", minutes, ":", seconds)
+	    );
 	  }
 	});
 

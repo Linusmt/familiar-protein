@@ -50,12 +50,13 @@ var App = React.createClass({
 
 var routes = (
   <Route name="app" path="/" handler={App}>
-    <Route name="question" path="/:qNumber" handler={DetailView}/>
+    <Route name="question" path="/:qNumber" handler={DetailView} />
     <DefaultRoute name="default" handler={OverView} />
   </Route>
 );
 
 Router.run(routes, function(Root){
-  React.render(<Root />, document.body);
+  React.
+  render(<Root />, document.body);
 });
 
