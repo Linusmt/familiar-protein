@@ -55,11 +55,13 @@ var routes = (
     <Route name="question" path="/question/:qNumber" handler={DetailView}/>
     <Route name="signin" path= "/signin" handler = {SignInView}/>
     <Route name="signup" path= "/signup" handler = {SignUpView}/>
+    <Route name="question" path="/:qNumber" handler={DetailView}/>
     <DefaultRoute name="default" handler={OverView} />
   </Route>
 );
 
 Router.run(routes, function(Root){
-  React.render(<Root />, document.body);
+  React.
+  render(<Root />, document.body);
 });
 
