@@ -48,6 +48,8 @@
 
 	var OverView = __webpack_require__(157);
 	var DetailView = __webpack_require__(197);
+	var SignInView = __webpack_require__(198);
+	var SignUpView = __webpack_require__(199);
 
 	var Router = __webpack_require__(158);
 	var RouteHandler = Router.RouteHandler;
@@ -96,7 +98,9 @@
 
 	var routes = (
 	  React.createElement(Route, {name: "app", path: "/", handler: App}, 
-	    React.createElement(Route, {name: "question", path: "/:qNumber", handler: DetailView}), 
+	    React.createElement(Route, {name: "question", path: "/question/:qNumber", handler: DetailView}), 
+	    React.createElement(Route, {name: "signin", path: "/signin", handler: SignInView}), 
+	    React.createElement(Route, {name: "signup", path: "/signup", handler: SignUpView}), 
 	    React.createElement(DefaultRoute, {name: "default", handler: OverView})
 	  )
 	);
@@ -20500,6 +20504,7 @@
 	          React.createElement("td", null, React.createElement("p", null, question.description)), 
 	          React.createElement("td", null, React.createElement(Link, {to: "question", params: {qNumber:question.qNumber}, className: "btn btn-primary"}, "Solve"))
 	        )
+
 	      )
 	    });
 
@@ -20509,7 +20514,8 @@
 	          React.createElement("tbody", null, 
 	            questions
 	          )
-	        )
+	        ), 
+	      React.createElement("div", null, React.createElement(Link, {to: "signin", className: "btn btn-primary"}, "Signin"))
 	      )
 	    );
 	  }
@@ -23763,6 +23769,123 @@
 
 	module.exports = DetailView;
 
+
+/***/ },
+/* 198 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+
+	var Router = __webpack_require__(158);
+	var Navigation = Router.Navigation;
+
+
+	var Link = Router.Link;
+
+	var SignInView = React.createClass({displayName: "SignInView",
+		mixins: [Navigation],
+
+		/* function: signin 
+		 * ----------------
+		 * This function is invoked when the user presses enter of clicks the signin
+		 * button. It takes the username and password from the text boxes and sends
+		 * them via ajax request to the server
+		*/
+		signin: function(){
+			var username = React.findDOMNode(this.refs.username).value;
+			var password = React.findDOMNode(this.refs.password).value;
+			var data = [username, password];
+			$.ajax({
+				url:window.location.origin + '/signin',
+				method: 'POST',
+				data: JSON.stringify(data),
+				contentType:"application/json",
+				dataType: 'json',
+				success: function(data){
+						console.log(data);
+					
+				},
+				error: function(xhr, status, err){
+				  console.error(xhr, status, err.message);
+				}
+			});
+
+		},
+
+		render: function(){
+			return (
+				React.createElement("div", null, 
+					React.createElement("h2", null, "Sign In"), 
+
+					React.createElement("form", {className: "form text-center"}, 
+						React.createElement("div", {className: "username"}, "Username:", React.createElement("input", {ref: "username", rows: "1", cols: "20", type: "text", className: "form-control", placeholder: "Username"})), 
+						React.createElement("div", {className: "password"}, "Password: ", React.createElement("input", {ref: "password", rows: "1", cols: "20", type: "password", className: "form-control", placeholder: "Password"})), 
+						React.createElement("button", {onClick: this.signin}, "Submit")
+					), 
+					React.createElement("p", null, "Log into your user account here. If you still need an account, click bellow"), 
+					React.createElement("div", null, React.createElement(Link, {to: "signup", className: "btn btn-primary"}, "Signup"))
+				)
+			)
+
+		}
+	});	
+
+	module.exports= SignInView;
+
+/***/ },
+/* 199 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+
+	var Router = __webpack_require__(158);
+	var Navigation = Router.Navigation;
+
+
+	var Link = Router.Link;
+
+	var SignUpView = React.createClass({displayName: "SignUpView",
+		mixins: [Navigation],
+
+		signup: function(){
+			var username = React.findDOMNode(this.refs.username).value;
+			var password = React.findDOMNode(this.refs.password).value;
+			var data = [username, password];
+			$.ajax({
+				url:window.location.origin + '/signup',
+				method: 'POST',
+				data: JSON.stringify(data),
+				contentType:"application/json",
+				dataType: 'json',
+				success: function(data){
+						console.log(data);
+					
+				},
+				error: function(xhr, status, err){
+				  console.error(xhr, status, err.message);
+				}
+			});
+
+		},
+
+		render: function(){
+			return (
+				React.createElement("div", null, 
+					React.createElement("h2", null, "Sign Up"), 
+					React.createElement("p", null, "Create a new user account here. If you already have an account, click bellow"), 
+					React.createElement("div", null, React.createElement(Link, {to: "signin", className: "btn btn-primary"}, "Signin")), 
+					React.createElement("form", {className: "form text-center"}, 
+						React.createElement("div", {className: "username"}, "Username:", React.createElement("input", {ref: "username", rows: "1", cols: "20", type: "text", className: "form-control", placeholder: "Username"})), 
+						React.createElement("div", {className: "password"}, "Password: ", React.createElement("input", {ref: "password", rows: "1", cols: "20", type: "password", className: "form-control", placeholder: "Password"})), 
+						React.createElement("button", {onClick: this.signup}, "Submit")
+					)
+				)
+			)
+
+		}
+	});	
+
+	module.exports= SignUpView;
 
 /***/ }
 /******/ ]);
