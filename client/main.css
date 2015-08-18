@@ -45,3 +45,8 @@ form {
   font-style: italic;
   color: red;
 }
+
+.points {
+  font-size: 0.75em;
+  color: #999999;
+}

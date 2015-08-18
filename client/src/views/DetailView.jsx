@@ -74,6 +74,32 @@ var DetailView = React.createClass({
     }
   },
 
+  handleSubmit: function(e) {
+    e.preventDefault();
+    var solution = React.findDOMNode(this.refs.solutionText).value;
+    var question = this.props.questions[this.props.params.qNumber - 1];
+    var data = {
+      "qNumber": question.qNumber,
+      "points": question.points,
+      "solution":  solution
+    }
+
+    React.findDOMNode(this.refs.solutionText).value = 'Solution Submitted';
+    $.ajax({
+        url: window.location.origin + '/submitSolution',
+        contentType:"application/json",
+        dataType: 'json',
+        type: 'POST',
+        data: JSON.stringify(data),
+        success: function(data) {
+          console.log("Success");
+        }.bind(this),
+        error: function(xhr, status, err) {
+          console.error(this.props.url, status, err.toString());
+        }.bind(this)
+      });
+  },
+
   render: function() {
     var question = this.props.questions[this.props.params.qNumber - 1];
 
@@ -93,7 +119,7 @@ var DetailView = React.createClass({
       <div className="question-solve">
         <div className="row">
           <div className="col-sm-10">
-            <h2>{question.title}</h2>
+            <h2>{question.title} <span className="points">Points:{question.points}</span></h2>
             <p>{question.description}</p>
           </div>
 
@@ -102,8 +128,9 @@ var DetailView = React.createClass({
           </div>
         </div>
 
-        <form className="form-inline text-center">
+        <form className="form-inline text-center" onSubmit={this.handleSubmit}>
           <span className="solution">/<textarea ref="solutionText" onChange={this.setRegex} rows="1" cols="50" type="text" className="regex form-control" placeholder="Regex solution..."></textarea>/</span>
+          {this.state.solved ? <p><button className="btn btn-success">{'Submit Solution'}</button></p> : null}
 
           {this.state.solved === null ? <p className="error-msg">Please provide valid regular expression</p> : null}
           {this.state.solved ? <h3 className="success">Success!!! Solved All Test Cases!</h3> : null}

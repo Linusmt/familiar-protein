@@ -50,6 +50,7 @@
 	var DetailView = __webpack_require__(197);
 	var SignInView = __webpack_require__(198);
 	var SignUpView = __webpack_require__(199);
+	var SolutionView = __webpack_require__(200)
 
 	var Router = __webpack_require__(158);
 	var RouteHandler = Router.RouteHandler;
@@ -98,9 +99,10 @@
 
 	var routes = (
 	  React.createElement(Route, {name: "app", path: "/", handler: App}, 
-	    React.createElement(Route, {name: "question", path: "/question/:qNumber", handler: DetailView}), 
 	    React.createElement(Route, {name: "signin", path: "/signin", handler: SignInView}), 
 	    React.createElement(Route, {name: "signup", path: "/signup", handler: SignUpView}), 
+	    React.createElement(Route, {name: "question", path: "/:qNumber", handler: DetailView}), 
+	    React.createElement(Route, {name: "solution", path: "/solution/:qNumber", handler: SolutionView}), 
 	    React.createElement(DefaultRoute, {name: "default", handler: OverView})
 	  )
 	);
@@ -20496,28 +20498,65 @@
 	var Link = Router.Link;
 
 	var OverView = React.createClass({displayName: "OverView",
+	  getInitialState: function(){
+	    return {data:null}
+	  },
+
+	  componentDidMount: function() {
+	    var data = {
+	      "username": 'kevin5'
+	    }
+	    $.ajax({
+	        url: window.location.origin + '/getSolutions',
+	        contentType:"application/json",
+	        dataType: 'json',
+	        type: 'POST',
+	        data: JSON.stringify(data),
+	        success: function(data) {
+	          this.setState({data: data});
+	        }.bind(this),
+	        error: function(xhr, status, err) {
+	          console.error(this.props.url, status, err.toString());
+	        }.bind(this)
+	      });
+	  },
+
 	  render: function() {
-	    var questions = this.props.questions.map(function(question) {
-	      return (
-	        React.createElement("tr", {key: question.qNumber, className: "question"}, 
-	          React.createElement("td", null, React.createElement("b", null, question.title)), 
-	          React.createElement("td", null, React.createElement("p", null, question.description)), 
-	          React.createElement("td", null, React.createElement(Link, {to: "question", params: {qNumber:question.qNumber}, className: "btn btn-primary"}, "Solve"))
-	        )
 
-	      )
-	    });
-
-	    return (
-	      React.createElement("div", null, 
-	        React.createElement("table", {className: "questionContainer table table-hover"}, 
-	          React.createElement("tbody", null, 
-	            questions
+	    if (this.state.data) {
+	      var solvedArray = [];
+	      for (var i = 0; i < this.props.questions.length; i++) {
+	        for (var j = 0; j < this.state.data.questionSolved.length;j++) {
+	          if (this.state.data.questionSolved[j].qNumber === i+1 && this.state.data.questionSolved[j].solved) {
+	            solvedArray[i] = true;
+	          }
+	        }
+	      }
+	      var questions = this.props.questions.map(function(question, index) {
+	        return (
+	          React.createElement("tr", {key: question.qNumber, className: "question"}, 
+	            React.createElement("td", null, React.createElement("b", null, question.title)), 
+	            React.createElement("td", null, React.createElement("p", null, question.description)), 
+	            React.createElement("td", null, React.createElement("p", {className: "points"}, "Points:", question.points)), 
+	            solvedArray[index] ? React.createElement("td", null, React.createElement(Link, {to: "solution", params: {qNumber:question.qNumber}, className: "btn btn-success"}, "Complete")) : React.createElement("td", null, React.createElement(Link, {to: "question", params: {qNumber:question.qNumber}, className: "btn btn-primary"}, "Solve"))
 	          )
-	        ), 
-	      React.createElement("div", null, React.createElement(Link, {to: "signin", className: "btn btn-primary"}, "Signin"))
-	      )
-	    );
+
+	        )
+	      });
+	      return (
+	        React.createElement("div", null, 
+	          React.createElement("table", {className: "questionContainer table table-hover"}, 
+	            React.createElement("tbody", null, 
+	              questions
+	            )
+	          ), 
+	        React.createElement("div", null, React.createElement(Link, {to: "signin", className: "btn btn-primary"}, "Signin"))
+	        )
+	      );
+
+	    } else {
+	      return (React.createElement("div", null, "loading"));
+	    }
 	  }
 	});
 
@@ -23714,6 +23753,32 @@
 	    }
 	  },
 
+	  handleSubmit: function(e) {
+	    e.preventDefault();
+	    var solution = React.findDOMNode(this.refs.solutionText).value;
+	    var question = this.props.questions[this.props.params.qNumber - 1];
+	    var data = {
+	      "qNumber": question.qNumber,
+	      "points": question.points,
+	      "solution":  solution
+	    }
+
+	    React.findDOMNode(this.refs.solutionText).value = 'Solution Submitted';
+	    $.ajax({
+	        url: window.location.origin + '/submitSolution',
+	        contentType:"application/json",
+	        dataType: 'json',
+	        type: 'POST',
+	        data: JSON.stringify(data),
+	        success: function(data) {
+	          console.log("Success");
+	        }.bind(this),
+	        error: function(xhr, status, err) {
+	          console.error(this.props.url, status, err.toString());
+	        }.bind(this)
+	      });
+	  },
+
 	  render: function() {
 	    var question = this.props.questions[this.props.params.qNumber - 1];
 
@@ -23733,7 +23798,7 @@
 	      React.createElement("div", {className: "question-solve"}, 
 	        React.createElement("div", {className: "row"}, 
 	          React.createElement("div", {className: "col-sm-10"}, 
-	            React.createElement("h2", null, question.title), 
+	            React.createElement("h2", null, question.title, " ", React.createElement("span", {className: "points"}, "Points:", question.points)), 
 	            React.createElement("p", null, question.description)
 	          ), 
 
@@ -23742,8 +23807,9 @@
 	          )
 	        ), 
 
-	        React.createElement("form", {className: "form-inline text-center"}, 
+	        React.createElement("form", {className: "form-inline text-center", onSubmit: this.handleSubmit}, 
 	          React.createElement("span", {className: "solution"}, "/", React.createElement("textarea", {ref: "solutionText", onChange: this.setRegex, rows: "1", cols: "50", type: "text", className: "regex form-control", placeholder: "Regex solution..."}), "/"), 
+	          this.state.solved ? React.createElement("p", null, React.createElement("button", {className: "btn btn-success"}, 'Submit Solution')) : null, 
 
 	          this.state.solved === null ? React.createElement("p", {className: "error-msg"}, "Please provide valid regular expression") : null, 
 	          this.state.solved ? React.createElement("h3", {className: "success"}, "Success!!! Solved All Test Cases!") : null
@@ -23886,6 +23952,98 @@
 	});	
 
 	module.exports= SignUpView;
+
+/***/ },
+/* 200 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var Router = __webpack_require__(158);
+	var Navigation = Router.Navigation;
+	var Link = Router.Link;
+
+	var SolutionView = React.createClass({displayName: "SolutionView",
+	  mixins: [Navigation],
+
+	  getInitialState: function(){
+	    return {data:null}
+	  },
+
+	  componentDidMount: function() {
+	    var question = this.props.questions[this.props.params.qNumber - 1];
+	    var data = {
+	      "qNumber": question.qNumber,
+	    }
+	    $.ajax({
+	        url: window.location.origin + '/getSolutions',
+	        contentType:"application/json",
+	        dataType: 'json',
+	        type: 'POST',
+	        data: JSON.stringify(data),
+	        success: function(data) {
+	          this.setState({data: data});
+	        }.bind(this),
+	        error: function(xhr, status, err) {
+	          console.error(this.props.url, status, err.toString());
+	        }.bind(this)
+	      });
+	  },
+
+
+	  returnToMenu: function() {
+	    this.props.goToQuestionMenu();
+	  },
+
+	  render: function() {
+	    var question = this.props.questions[this.props.params.qNumber - 1];
+	    // var solutions = this.state.data.map(function(solution) {
+	    //   return (
+	    //     <tr>
+	    //       <td><p>{solution.user}</p></td>
+	    //       <td><p>{solution.solution}</p></td>
+	    //       <td><p>Points:{solution.votes}</p></td>
+	    //     </tr>
+	    //   )
+	    // });
+	    if (this.state.data) {
+	      var solution = '';
+	      for(var i = 0 ; i < this.state.data.questionSolved.length;i++) {
+	        if (this.state.data.questionSolved[i].qNumber === question.qNumber) {
+	          solution = this.state.data.questionSolved[i].solution;
+	        }
+	      } 
+	      return (
+	        React.createElement("div", {className: "question-solve"}, 
+	          React.createElement("div", {className: "row"}, 
+
+	            React.createElement("div", {className: "col-sm-10"}, 
+	              React.createElement("h2", null, question.title, " ", React.createElement("span", {className: "points"}, "Points: ", question.points)), 
+	              React.createElement("p", null, question.description)
+	            ), 
+	            React.createElement("div", {className: "col-sm-2"}, 
+	              React.createElement(Link, {to: "default", className: "btn btn-primary back"}, "Back")
+	            ), 
+
+	            React.createElement("div", {className: "col-sm-12"}, 
+	              React.createElement("h4", null, "Your Solution:"), 
+	              React.createElement("p", null, solution), 
+	              React.createElement("h4", null, "Other solutions:"), 
+	              React.createElement("table", {className: "questionContainer table table-hover"}, 
+	                React.createElement("tbody", null
+	                )
+	              )
+	            )
+	          )
+	        )
+	      )
+	    } else {
+	      return (React.createElement("div", null, "loading"))
+	    }
+	  }
+	});
+
+	module.exports = SolutionView;
+
 
 /***/ }
 /******/ ]);

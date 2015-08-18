@@ -1,5 +1,8 @@
 var bcrypt = require('bcrypt-nodejs');
 var User = require('./userModel');
+	
+	
+
 
 
 /* function: signup
@@ -10,13 +13,12 @@ var User = require('./userModel');
  * returns a cookie with the users username and sends back the username.
 */
 var signin = function(req,res){
-	console.log(req.body);
 	User.findOne({username:req.body[0]}, function(err, data){
 		if(err){
 			res.send(418, err);
 		} else {
 			if(	bcrypt.compareSync(req.body[1], data.password)){
-				res.cookie(data.username);
+				res.cookie('username', data.username);
 				res.status(200).send(data);
 			}
 			res.status(404).send();
@@ -42,23 +44,50 @@ var signup = function(req, res){
 			var user = new User({
 				username: req.body[0],
 				password:hash,
-				points:[]
+				points: 0
 			});
 			user.save(function(err, result){
 				if(err) res.status(404).send();
-				res.cookie(data.username);
+				res.cookie('username', data.username);
 				res.status(200).send(result.username);
 			});
 		}
 	});
+};
+
+var submitSolution = function(req, res) {
+	var username = req.cookies.username
+	User.update(
+     {"username":username},
+     { $push: {"questionSolved": {"qNumber": req.body.qNumber, "solved": true, "solution": req.body.solution}}, $inc: {"points": req.body.points}},
+       function(err, model) {
+         if(err){
+        	console.log(err);
+        	return res.send(err);
+         }
+          return res.json(model);
+      });
+
 
 };
 
+var getSolutions = function(req, res) {
+	var username = req.cookies.username
+	User.findOne({username:username}, function(err, data){
+		if(err){
+		 res.status(404).send();
+		} else {
+			res.status(200).send(data)
+		}
+	})
+}
 
 
 
 
 module.exports = {
 	signin: signin,
-	signup: signup
+	signup: signup,
+	submitSolution: submitSolution,
+	getSolutions: getSolutions
 }

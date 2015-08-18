@@ -3,6 +3,7 @@ var questions = require('./questionData');
 
 var QuestionSchema = new mongoose.Schema({
   qNumber: {type: Number, unique: true},
+  points: Number,
   title: String,
   description: String,
   truthy: [String],
