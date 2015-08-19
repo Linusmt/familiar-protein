@@ -53,7 +53,7 @@ var App = React.createClass({
         <div id='sidebar-wrapper'>
           <ul className='sidebar-nav'>
             <li className='sidebar-brand'>
-              <Link to='default'>Regexr</Link>
+              <Link to='default'>Regex Game</Link>
             </li>
             <li>
               <Link to='default'>Questions</Link>

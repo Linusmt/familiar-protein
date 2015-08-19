@@ -46,7 +46,6 @@ form {
   color: red;
 }
 
-<<<<<<< HEAD
 #wrapper {
     padding-left: 0;
     -webkit-transition: all 0.5s ease;
@@ -164,9 +163,13 @@ form {
         margin-right: 0;
     }
 }
-=======
+
+.table > tbody > tr.info >th {
+  background-color: #D8DCE3 !important;
+}
+
 .points {
   font-size: 0.75em;
   color: #999999;
 }
->>>>>>> 6fc7dbde3e168eb1555e561e91cc48ea85dd26a8
+
