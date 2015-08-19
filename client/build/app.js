@@ -23913,16 +23913,33 @@
 
 		render: function(){
 			return (
-				React.createElement("div", null, 
+				React.createElement("div", {id: "page-content-wrapper"}, 
+	        React.createElement("div", {className: "container-fluid"}, 
+
 					React.createElement("h2", null, "Sign In"), 
 
-					React.createElement("form", {className: "form text-center"}, 
-						React.createElement("div", {className: "username"}, "Username:", React.createElement("input", {ref: "username", rows: "1", cols: "20", type: "text", className: "form-control", placeholder: "Username"})), 
-						React.createElement("div", {className: "password"}, "Password: ", React.createElement("input", {ref: "password", rows: "1", cols: "20", type: "password", className: "form-control", placeholder: "Password"})), 
-						React.createElement("button", {onClick: this.signin}, "Submit")
-					), 
-					React.createElement("p", null, "Log into your user account here. If you still need an account, click bellow"), 
-					React.createElement("div", null, React.createElement(Link, {to: "signup", className: "btn btn-primary"}, "Signup"))
+					React.createElement("form", {className: "form-horizontal"}, 
+					  React.createElement("div", {className: "form-group"}, 
+					    React.createElement("label", {className: "col-sm-2 control-label"}, "Username"), 
+					    React.createElement("div", {className: "col-sm-10"}, 
+					      React.createElement("input", {className: "form-control", placeholder: "Username"})
+					    )
+					  ), 
+					  React.createElement("div", {className: "form-group"}, 
+					    React.createElement("label", {className: "col-sm-2 control-label"}, "Password"), 
+					    React.createElement("div", {className: "col-sm-10"}, 
+					      React.createElement("input", {type: "password", className: "form-control", placeholder: "Password"})
+					    )
+					  ), 
+					  React.createElement("div", {className: "form-group"}, 
+					    React.createElement("div", {className: "col-sm-offset-2 col-sm-10"}, 
+					      React.createElement("button", {onClick: this.signin, className: "btn btn-default"}, "Sign In")
+					    )
+					  )
+					 ), 
+
+					React.createElement("p", null, "Need an account? Click ", React.createElement(Link, {to: "signup"}, "here."))
+					)
 				)
 			)
 
