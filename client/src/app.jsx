@@ -7,6 +7,7 @@ var SignUpView = require('./views/SignUpView.jsx');
 var TutorialView = require('./views/RegexTutorialView.jsx');
 var SolutionView = require('./views/SolutionView.jsx');
 var LeaderBoardView = require('./views/LeaderBoardView.jsx');
+var ProfileView = require('./views/ProfileView.jsx');
 
 var Router = require('react-router');
 var RouteHandler = Router.RouteHandler;
@@ -75,7 +76,7 @@ var App = React.createClass({
             </li>
             <li>Signed in as: {this.state.username}  </li>
             <li>
-              <Link to='default'>Profile</Link>
+              <Link to='profile'>Profile</Link>
             </li>
             <li>
               <Link to='questions'>Questions</Link>
@@ -109,6 +110,7 @@ var routes = (
     <Route name="signup" path= "/signup" handler = {SignUpView}/>
     <Route name="leaderboard" path= "leaderboard" handler= {LeaderBoardView}/>
     <DefaultRoute name="default" handler={SignInView} />
+
   </Route>
 );
 

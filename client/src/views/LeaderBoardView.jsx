@@ -47,15 +47,16 @@ var LeaderBoardView = React.createClass({
 		});
 
 		return (
-			<div id='page-content-wrapper'> 
+
+			<div id='page-content-wrapper'>
         <div className='container-fluid'>
-					<h2> Leaderboard </h2>
-					<table className = "questionContainer table table-hover">
-						<tbody>
-							{scores}
-						</tbody>
-					</table> 
-				</div>	
+				<h2> Leaderboard </h2>
+				<table className = "questionContainer table table-hover">
+					<tbody>
+						{scores}
+					</tbody>
+				</table> 
+			</div>
 			</div>
 		)
 	}
