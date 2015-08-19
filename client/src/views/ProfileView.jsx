@@ -23,7 +23,8 @@ var ProfileView = React.createClass({
     return(
       <div id='page-content-wrapper'>
         <div className='container-fluid'>
-
+        </div>
+        </div>
 
 
       )
