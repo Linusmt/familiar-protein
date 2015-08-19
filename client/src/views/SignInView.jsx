@@ -38,16 +38,33 @@ var SignInView = React.createClass({
 
 	render: function(){
 		return (
-			<div> 
+			<div id='page-content-wrapper'> 
+        <div className='container-fluid'>
+
 				<h2>Sign In</h2>
 
-				<form className="form text-center">
-					<div className="username">Username:<input ref="username" rows="1" cols="20" type="text" className="form-control" placeholder="Username"></input></div>
-					<div className="password">Password: <input ref="password" rows="1" cols="20" type="password" className="form-control" placeholder="Password"></input></div>
-					<button onClick={this.signin}>Submit</button>
-				</form>
-				<p>Log into your user account here. If you still need an account, click bellow</p>
-				<div><Link to="signup"  className="btn btn-primary">Signup</Link></div>
+				<form className="form-horizontal">
+				  <div className="form-group">
+				    <label className="col-sm-2 control-label">Username</label>
+				    <div className="col-sm-10">
+				      <input className="form-control" placeholder="Username"/>
+				    </div>
+				  </div>
+				  <div className="form-group">
+				    <label className="col-sm-2 control-label">Password</label>
+				    <div className="col-sm-10">
+				      <input type="password" className="form-control" placeholder="Password"/>
+				    </div>
+				  </div>
+				  <div className="form-group">
+				    <div className="col-sm-offset-2 col-sm-10">
+				      <button onClick={this.signin} className="btn btn-default">Sign In</button>
+				    </div>
+				  </div>
+				 </form>
+
+				<p>Need an account? Click <Link to='signup'>here.</Link></p>
+				</div>
 			</div>
 		)
 

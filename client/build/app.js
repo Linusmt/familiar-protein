@@ -50,14 +50,19 @@
 	var DetailView = __webpack_require__(197);
 	var SignInView = __webpack_require__(198);
 	var SignUpView = __webpack_require__(199);
+	var TutorialView = __webpack_require__(200);
 
 	var Router = __webpack_require__(158);
 	var RouteHandler = Router.RouteHandler;
 	var DefaultRoute = Router.DefaultRoute;
 	var Route = Router.Route;
+	var Link = Router.Link;
+	var Navigation = Router.Navigation;
 
 
 	var App = React.createClass({displayName: "App",
+	  mixins: [Navigation],
+
 	  getInitialState: function(){
 	    return {
 	      questions: []
@@ -87,8 +92,34 @@
 
 	  render: function() {
 	    return (
-	      React.createElement("div", {className: "container"}, 
-	        React.createElement("h2", {className: "title"}, "Regex Game"), 
+	      React.createElement("div", {id: "wrapper"}, 
+
+	        React.createElement("div", {id: "sidebar-wrapper"}, 
+	          React.createElement("ul", {className: "sidebar-nav"}, 
+	            React.createElement("li", {className: "sidebar-brand"}, 
+	              React.createElement(Link, {to: "default"}, "Regexr")
+	            ), 
+	            React.createElement("li", null, 
+	              React.createElement(Link, {to: "default"}, "Questions")
+	            ), 
+	            React.createElement("li", null, 
+	              React.createElement(Link, {to: "default"}, "Profile")
+	            ), 
+	            React.createElement("li", null, 
+	              React.createElement(Link, {to: "default"}, "Leaderboard")
+	            ), 
+	            React.createElement("li", null, 
+	              React.createElement(Link, {to: "default"}, "Solutions")
+	            ), 
+	            React.createElement("li", null, 
+	              React.createElement(Link, {to: "tutorial"}, "Regex Cheatsheet")
+	            ), 
+	            React.createElement("li", null, 
+	              React.createElement(Link, {to: "signin"}, "Signin")
+	            )
+	          )
+	      
+	        ), 
 	        React.createElement(RouteHandler, {questions: this.state.questions})
 	      )
 	    )
@@ -98,6 +129,7 @@
 
 	var routes = (
 	  React.createElement(Route, {name: "app", path: "/", handler: App}, 
+	    React.createElement(Route, {name: "tutorial", path: "/tutorial", handler: TutorialView}), 
 	    React.createElement(Route, {name: "question", path: "/question/:qNumber", handler: DetailView}), 
 	    React.createElement(Route, {name: "signin", path: "/signin", handler: SignInView}), 
 	    React.createElement(Route, {name: "signup", path: "/signup", handler: SignUpView}), 
@@ -20505,18 +20537,19 @@
 	          React.createElement("td", null, React.createElement("p", null, question.description)), 
 	          React.createElement("td", null, React.createElement(Link, {to: "question", params: {qNumber:question.qNumber}, className: "btn btn-primary"}, "Solve"))
 	        )
-
 	      )
 	    });
 
 	    return (
-	      React.createElement("div", null, 
+	      React.createElement("div", {id: "page-content-wrapper"}, 
+	        React.createElement("div", {className: "container-fluid"}, 
+	        React.createElement("h2", null, "Regex Puzzles"), 
 	        React.createElement("table", {className: "questionContainer table table-hover"}, 
 	          React.createElement("tbody", null, 
 	            questions
 	          )
-	        ), 
-	      React.createElement("div", null, React.createElement(Link, {to: "signin", className: "btn btn-primary"}, "Signin"))
+	        )
+	      )
 	      )
 	    );
 	  }
@@ -23684,7 +23717,6 @@
 	    return (
 	     React.createElement("p", {key: hint, className: "displayedHint"}, hint)
 	    )
-	 
 
 	  },
 
@@ -23753,45 +23785,45 @@
 	    }
 
 	    return (
-	      React.createElement("div", {className: "question-solve"}, 
-	        React.createElement("div", {className: "row"}, 
-	          React.createElement("div", {className: "col-sm-10"}, 
-	            React.createElement("h2", null, question.title), 
-	            React.createElement("p", null, question.description), 
-	            React.createElement(Timer, {stop: this.state.solved})
+	      React.createElement("div", {id: "page-content-wrapper"}, 
+	        React.createElement("div", {className: "container-fluid"}, 
+	          React.createElement("div", {className: "row"}, 
+	            React.createElement("div", {className: "col-lg-12"}, 
+	              React.createElement("h2", null, question.title), 
+	              React.createElement("p", null, question.description), 
+	              React.createElement(Timer, {stop: this.state.solved})
+	            )
+
 	          ), 
 
-	          React.createElement("div", {className: "col-sm-2"}, 
-	            React.createElement(Link, {to: "default", className: "btn btn-primary back"}, "Back")
-	          )
-	        ), 
+	          React.createElement("form", {className: "form-inline text-center"}, 
+	            React.createElement("span", {className: "solution"}, "/", React.createElement("textarea", {ref: "solutionText", onChange: this.setRegex, rows: "1", cols: "50", type: "text", className: "regex form-control", placeholder: "Regex solution..."}), "/"), 
 
-	        React.createElement("form", {className: "form-inline text-center"}, 
-	          React.createElement("span", {className: "solution"}, "/", React.createElement("textarea", {ref: "solutionText", onChange: this.setRegex, rows: "1", cols: "50", type: "text", className: "regex form-control", placeholder: "Regex solution..."}), "/"), 
+	            this.state.solved === null ? React.createElement("p", {className: "error-msg"}, "Please provide valid regular expression") : null, 
+	            this.state.solved ? React.createElement("h3", {className: "success"}, "Success!!! Solved All Test Cases!") : null
 
-	          this.state.solved === null ? React.createElement("p", {className: "error-msg"}, "Please provide valid regular expression") : null, 
-	          this.state.solved ? React.createElement("h3", {className: "success"}, "Success!!! Solved All Test Cases!") : null
-
-	        ), 
-	        React.createElement("div", {className: "text-center"}, 
-	          React.createElement("div", {className: "btn btn-primary hints", onClick: this.countHint}, "Hint"), 
-	          React.createElement("p", null), 
-	          this.state.showHint ? this.displayHint() : null
-	        ), 
-	        React.createElement("div", {className: "test-cases"}, 
-
-	          React.createElement("p", {className: "instruction"}, 'Make all words turn green to complete the challenge'), 
-	          React.createElement("div", {className: "col-sm-6 text-center"}, 
-	            React.createElement("h3", null, 'Should match'), 
-	            this.displayTestCases('truthy', true)
 	          ), 
-	          React.createElement("div", {className: "col-sm-6 text-center"}, 
-	            React.createElement("h3", null, 'Should not match'), 
-	            this.displayTestCases('falsy', false)
-	          )
 
+	          React.createElement("div", {className: "text-center"}, 
+	            React.createElement("div", {className: "btn btn-primary hints", onClick: this.countHint}, "Hint"), 
+	            React.createElement("p", null), 
+	            this.state.showHint ? this.displayHint() : null
+	          ), 
+
+	          React.createElement("div", {className: "test-cases"}, 
+
+	            React.createElement("p", {className: "instruction"}, 'Make all words turn green to complete the challenge'), 
+	            React.createElement("div", {className: "col-sm-6 text-center"}, 
+	              React.createElement("h3", null, 'Should match'), 
+	              this.displayTestCases('truthy', true)
+	            ), 
+	            React.createElement("div", {className: "col-sm-6 text-center"}, 
+	              React.createElement("h3", null, 'Should not match'), 
+	              this.displayTestCases('falsy', false)
+	            )
+	            )
+	          )
 	        )
-	      )
 	    )
 	  }
 	});
@@ -23881,16 +23913,33 @@
 
 		render: function(){
 			return (
-				React.createElement("div", null, 
+				React.createElement("div", {id: "page-content-wrapper"}, 
+	        React.createElement("div", {className: "container-fluid"}, 
+
 					React.createElement("h2", null, "Sign In"), 
 
-					React.createElement("form", {className: "form text-center"}, 
-						React.createElement("div", {className: "username"}, "Username:", React.createElement("input", {ref: "username", rows: "1", cols: "20", type: "text", className: "form-control", placeholder: "Username"})), 
-						React.createElement("div", {className: "password"}, "Password: ", React.createElement("input", {ref: "password", rows: "1", cols: "20", type: "password", className: "form-control", placeholder: "Password"})), 
-						React.createElement("button", {onClick: this.signin}, "Submit")
-					), 
-					React.createElement("p", null, "Log into your user account here. If you still need an account, click bellow"), 
-					React.createElement("div", null, React.createElement(Link, {to: "signup", className: "btn btn-primary"}, "Signup"))
+					React.createElement("form", {className: "form-horizontal"}, 
+					  React.createElement("div", {className: "form-group"}, 
+					    React.createElement("label", {className: "col-sm-2 control-label"}, "Username"), 
+					    React.createElement("div", {className: "col-sm-10"}, 
+					      React.createElement("input", {className: "form-control", placeholder: "Username"})
+					    )
+					  ), 
+					  React.createElement("div", {className: "form-group"}, 
+					    React.createElement("label", {className: "col-sm-2 control-label"}, "Password"), 
+					    React.createElement("div", {className: "col-sm-10"}, 
+					      React.createElement("input", {type: "password", className: "form-control", placeholder: "Password"})
+					    )
+					  ), 
+					  React.createElement("div", {className: "form-group"}, 
+					    React.createElement("div", {className: "col-sm-offset-2 col-sm-10"}, 
+					      React.createElement("button", {onClick: this.signin, className: "btn btn-default"}, "Sign In")
+					    )
+					  )
+					 ), 
+
+					React.createElement("p", null, "Need an account? Click ", React.createElement(Link, {to: "signup"}, "here."))
+					)
 				)
 			)
 
@@ -23953,6 +24002,26 @@
 	});	
 
 	module.exports= SignUpView;
+
+/***/ },
+/* 200 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1); 
+
+	var Router = __webpack_require__(158);
+
+	var TutorialView = React.createClass({displayName: "TutorialView", 
+	  render: function(){ 
+	    return (
+	      React.createElement("div", null, "Hello")
+
+
+	      )
+	  }
+	});
+
+	module.exports = TutorialView;
 
 /***/ }
 /******/ ]);

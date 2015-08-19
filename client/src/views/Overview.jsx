@@ -12,18 +12,19 @@ var OverView = React.createClass({
           <td><p>{question.description}</p></td>
           <td><Link to="question" params={{qNumber:question.qNumber}} className="btn btn-primary">Solve</Link></td>
         </tr>
-
       )
     });
 
     return (
-      <div>
+      <div id='page-content-wrapper'>
+        <div className='container-fluid'>
+        <h2>Regex Puzzles</h2>
         <table className="questionContainer table table-hover">
           <tbody>
             {questions}
           </tbody>
         </table>
-      <div><Link to="signin"  className="btn btn-primary">Signin</Link></div>
+      </div>
       </div>
     );
   }
