@@ -44,22 +44,33 @@ var SignUpView = React.createClass({
 
 	render: function(){
 		return (
-			<div> 
+			<div id='page-content-wrapper'> 
+        <div className='container-fluid'>
+
 				<h2>Sign Up</h2>
-				<p>Please create a new account or continue to Login</p>
-				<div><Link to="signin"  className="btn btn-primary">Signin</Link></div>
-					<form className="form-inline">
-						<div className="form-group">
-							<label>Username</label>
-	  	  			<input ref="username" type="username" className="form-control" placeholder="Username" />
-	    			</div>
-	    			<div className="form-group">
-							<label>Password</label>
-	    				<input ref="password" type="password" className="form-control" placeholder="Password" />
-	    			</div>
-						<button onClick={this.signup} className="btn btn-primary">Submit</button>
-					</form>
-					{this.state.login === false ? <p className="error-msg">Username is taken, please try again</p> : null}
+
+				<form className="form-horizontal">
+				  <div className="form-group">
+				    <label className="col-sm-2 control-label">Username</label>
+				    <div className="col-sm-10">
+				      <input className="form-control" placeholder="Username"/>
+				    </div>
+				  </div>
+				  <div className="form-group">
+				    <label className="col-sm-2 control-label">Password</label>
+				    <div className="col-sm-10">
+				      <input type="password" className="form-control" placeholder="Password"/>
+				    </div>
+				  </div>
+				  <div className="form-group">
+				    <div className="col-sm-offset-2 col-sm-10">
+				      <button onClick={this.signup} className="btn btn-default">Sign Up</button>
+				    </div>
+				  </div>
+				 </form>
+				 {this.state.login === false ? <p className="error-msg">Username is taken, please try again</p> : null}
+				<p>Already have an account? Click <Link to='signin'>here to login.</Link></p>
+				</div>
 			</div>
 		)
 	}
