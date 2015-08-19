@@ -18,13 +18,13 @@ var OverView = React.createClass({
     return (
       <div id='page-content-wrapper'>
         <div className='container-fluid'>
-        <h2>Regex Puzzles</h2>
-        <table className="questionContainer table table-hover">
-          <tbody>
-            {questions}
-          </tbody>
-        </table>
-      </div>
+          <h2>Regex Puzzles</h2>
+          <table className="questionContainer table table-hover">
+            <tbody>
+              {questions}
+            </tbody>
+          </table>
+        </div>
       </div>
     );
   }

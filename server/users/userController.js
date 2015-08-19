@@ -39,16 +39,20 @@ var signup = function(req, res){
 		} else {
 			var hash = bcrypt.hashSync(req.body[1]);
 			console.log(hash);
+
 			var user = new User({
 				username: req.body[0],
 				password:hash,
 				points:[]
 			});
+
 			user.save(function(err, result){
 				if(err) res.status(404).send();
 				res.cookie(data.username);
-				res.status(200).send(result.username);
+				res.status(200).send(data);
 			});
+
+			res.status(200).send(result.username);
 		}
 	});
 

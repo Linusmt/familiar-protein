@@ -47,8 +47,8 @@
 	var React = __webpack_require__(1);
 
 	var OverView = __webpack_require__(157);
-	var DetailView = __webpack_require__(197);
-	var SignInView = __webpack_require__(198);
+	var DetailView = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"./views/DetailView.jsx\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
+	var SignInView = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"./views/SignInView.jsx\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
 	var SignUpView = __webpack_require__(199);
 	var TutorialView = __webpack_require__(200);
 
@@ -133,7 +133,8 @@
 	    React.createElement(Route, {name: "question", path: "/question/:qNumber", handler: DetailView}), 
 	    React.createElement(Route, {name: "signin", path: "/signin", handler: SignInView}), 
 	    React.createElement(Route, {name: "signup", path: "/signup", handler: SignUpView}), 
-	    React.createElement(DefaultRoute, {name: "default", handler: OverView})
+	    React.createElement(Route, {name: "overview", path: "/profile", handler: OverView}), 
+	    React.createElement(DefaultRoute, {name: "default", handler: SignInView})
 	  )
 	);
 
@@ -20543,13 +20544,13 @@
 	    return (
 	      React.createElement("div", {id: "page-content-wrapper"}, 
 	        React.createElement("div", {className: "container-fluid"}, 
-	        React.createElement("h2", null, "Regex Puzzles"), 
-	        React.createElement("table", {className: "questionContainer table table-hover"}, 
-	          React.createElement("tbody", null, 
-	            questions
+	          React.createElement("h2", null, "Regex Puzzles"), 
+	          React.createElement("table", {className: "questionContainer table table-hover"}, 
+	            React.createElement("tbody", null, 
+	              questions
+	            )
 	          )
 	        )
-	      )
 	      )
 	    );
 	  }
@@ -23669,285 +23670,8 @@
 	module.exports = runRouter;
 
 /***/ },
-/* 197 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-
-	var Router = __webpack_require__(158);
-	var Navigation = Router.Navigation;
-	var Link = Router.Link;
-
-
-	var DetailView = React.createClass({displayName: "DetailView",
-	  mixins: [Navigation],
-
-	  getInitialState: function(){
-	    return {
-	      result: '',
-	      solved: false,
-	      hintNo: -1, 
-	      showHint: false
-	    };
-	  },
-
-	  setRegex: function() {
-	    var value = React.findDOMNode(this.refs.solutionText).value;
-	    var solved = this.isSolved(value);
-	    this.setState({
-	      result: value,
-	      solved: solved
-	    });
-	  },
-
-	  checkTestCase: function(testCase, condition) {
-	    try {
-	      var regex = new RegExp(this.state.result);
-	      return regex.test(testCase) === condition ? 'solved' : 'unsolved';
-	    } catch(e) {
-	      return 'unsolved';
-	    }
-	  },
-
-	  displayHint: function(){ 
-	    var question = this.props.questions[this.props.params.qNumber - 1];
-	    var hNumber = this.state.hintNo
-	    var hint = question['hints'][hNumber] || question['hints'][question['hints'].length - 1]
-	    
-	    return (
-	     React.createElement("p", {key: hint, className: "displayedHint"}, hint)
-	    )
-
-	  },
-
-	  countHint: function(){ 
-	    var temp = this.state.hintNo
-	    this.setState({ 
-	      hintNo: temp+1, 
-	      showHint: true
-	    })
-	  },
-
-	  displayTestCases: function(string, condition) {
-	    var question = this.props.questions[this.props.params.qNumber - 1];
-	    return question[string].map(function(testCase) {
-	      return (
-	        React.createElement("p", {key: testCase, className: this.checkTestCase(testCase, condition)}, testCase)
-	      )
-	    }.bind(this));
-	  },
-
-	  //TODO: Impliment "next" button or automatically return to menu after question is solved
-	  returnToMenu: function() {
-	    this.setState({
-	      result: '',
-	      solved: false,
-	    });
-
-	    this.props.goToQuestionMenu();
-	  },
-
-	  isSolved: function(regexString) {
-	    var question = this.props.questions[this.props.params.qNumber - 1];
-
-	    var truthy = question['truthy']
-	    var falsy = question['falsy'];
-
-	    try {
-	      var regex = new RegExp(regexString);
-
-	      var solvedTruthy = truthy.reduce(function(result, current) {
-	        return result && regex.test(current);
-	      }, true);
-
-	      var solvedFalsy = falsy.reduce(function(result, current) {
-	        return result && !regex.test(current);
-	      }, true);
-
-	      return solvedTruthy && solvedFalsy;
-	    } catch(e) {
-	      return null;
-	    }
-	  },
-
-	  render: function() {
-	    var question = this.props.questions[this.props.params.qNumber - 1];
-
-	    if (this.props.questions.length > 0 && question === undefined) {
-	      this.transitionTo('/');
-	    }
-
-	    // makes sure that the questions are loaded from the database before rendering the view
-	    try {
-	      question.title;
-	    } catch(e) {
-	      return React.createElement("div", null);
-	    }
-
-	    return (
-	      React.createElement("div", {id: "page-content-wrapper"}, 
-	        React.createElement("div", {className: "container-fluid"}, 
-	          React.createElement("div", {className: "row"}, 
-	            React.createElement("div", {className: "col-lg-12"}, 
-	              React.createElement("h2", null, question.title), 
-	              React.createElement("p", null, question.description), 
-	              React.createElement(Timer, {stop: this.state.solved})
-	            )
-
-	          ), 
-
-	          React.createElement("form", {className: "form-inline text-center"}, 
-	            React.createElement("span", {className: "solution"}, "/", React.createElement("textarea", {ref: "solutionText", onChange: this.setRegex, rows: "1", cols: "50", type: "text", className: "regex form-control", placeholder: "Regex solution..."}), "/"), 
-
-	            this.state.solved === null ? React.createElement("p", {className: "error-msg"}, "Please provide valid regular expression") : null, 
-	            this.state.solved ? React.createElement("h3", {className: "success"}, "Success!!! Solved All Test Cases!") : null
-
-	          ), 
-
-	          React.createElement("div", {className: "text-center"}, 
-	            React.createElement("div", {className: "btn btn-primary hints", onClick: this.countHint}, "Hint"), 
-	            React.createElement("p", null), 
-	            this.state.showHint ? this.displayHint() : null
-	          ), 
-
-	          React.createElement("div", {className: "test-cases"}, 
-
-	            React.createElement("p", {className: "instruction"}, 'Make all words turn green to complete the challenge'), 
-	            React.createElement("div", {className: "col-sm-6 text-center"}, 
-	              React.createElement("h3", null, 'Should match'), 
-	              this.displayTestCases('truthy', true)
-	            ), 
-	            React.createElement("div", {className: "col-sm-6 text-center"}, 
-	              React.createElement("h3", null, 'Should not match'), 
-	              this.displayTestCases('falsy', false)
-	            )
-	            )
-	          )
-	        )
-	    )
-	  }
-	});
-
-	var Timer = React.createClass({displayName: "Timer",
-	  getInitialState: function() {
-	    return {secondsElapsed: 0};
-	  },
-	  tick: function() {
-	    if(this.props.stop === true) {
-	      clearInterval(this.interval);  
-	    } else {
-	      this.setState({secondsElapsed: this.state.secondsElapsed + 1});
-	    }
-	  },
-	  componentDidMount: function() {
-	    this.interval = setInterval(this.tick, 1000);
-	      },
-	  componentWillUnmount: function() {
-	    clearInterval(this.interval);
-	  },
-	  render: function() {
-	    var time = new Date(0);
-	    time.setSeconds(this.state.secondsElapsed);
-
-	    var minutes = time.getMinutes();
-	    var seconds = time.getSeconds();
-
-	    if(minutes < 10) {
-	      minutes = '0' + minutes;
-	    }
-	    if(seconds < 10) {
-	      seconds = '0'+ seconds;
-	    }
-
-	    return (
-	      React.createElement("div", null, "Time Elapsed: ", minutes, ":", seconds)
-	    );
-	  }
-	});
-
-	module.exports = DetailView;
-
-
-/***/ },
-/* 198 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-
-	var Router = __webpack_require__(158);
-	var Navigation = Router.Navigation;
-
-
-	var Link = Router.Link;
-
-	var SignInView = React.createClass({displayName: "SignInView",
-		mixins: [Navigation],
-
-		/* function: signin 
-		 * ----------------
-		 * This function is invoked when the user presses enter of clicks the signin
-		 * button. It takes the username and password from the text boxes and sends
-		 * them via ajax request to the server
-		*/
-		signin: function(){
-			var username = React.findDOMNode(this.refs.username).value;
-			var password = React.findDOMNode(this.refs.password).value;
-			var data = [username, password];
-			$.ajax({
-				url:window.location.origin + '/signin',
-				method: 'POST',
-				data: JSON.stringify(data),
-				contentType:"application/json",
-				dataType: 'json',
-				success: function(data){
-						console.log(data);
-					
-				},
-				error: function(xhr, status, err){
-				  console.error(xhr, status, err.message);
-				}
-			});
-
-		},
-
-		render: function(){
-			return (
-				React.createElement("div", {id: "page-content-wrapper"}, 
-	        React.createElement("div", {className: "container-fluid"}, 
-
-					React.createElement("h2", null, "Sign In"), 
-
-					React.createElement("form", {className: "form-horizontal"}, 
-					  React.createElement("div", {className: "form-group"}, 
-					    React.createElement("label", {className: "col-sm-2 control-label"}, "Username"), 
-					    React.createElement("div", {className: "col-sm-10"}, 
-					      React.createElement("input", {className: "form-control", placeholder: "Username"})
-					    )
-					  ), 
-					  React.createElement("div", {className: "form-group"}, 
-					    React.createElement("label", {className: "col-sm-2 control-label"}, "Password"), 
-					    React.createElement("div", {className: "col-sm-10"}, 
-					      React.createElement("input", {type: "password", className: "form-control", placeholder: "Password"})
-					    )
-					  ), 
-					  React.createElement("div", {className: "form-group"}, 
-					    React.createElement("div", {className: "col-sm-offset-2 col-sm-10"}, 
-					      React.createElement("button", {onClick: this.signin, className: "btn btn-default"}, "Sign In")
-					    )
-					  )
-					 ), 
-
-					React.createElement("p", null, "Need an account? Click ", React.createElement(Link, {to: "signup"}, "here."))
-					)
-				)
-			)
-
-		}
-	});	
-
-	module.exports= SignInView;
-
-/***/ },
+/* 197 */,
+/* 198 */,
 /* 199 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -23962,10 +23686,18 @@
 	var SignUpView = React.createClass({displayName: "SignUpView",
 		mixins: [Navigation],
 
+		getInitialState: function(){
+	    return {
+	      login: true
+	    };
+	  },
+
 		signup: function(){
 			var username = React.findDOMNode(this.refs.username).value;
 			var password = React.findDOMNode(this.refs.password).value;
 			var data = [username, password];
+			var that = this;
+
 			$.ajax({
 				url:window.location.origin + '/signup',
 				method: 'POST',
@@ -23973,11 +23705,15 @@
 				contentType:"application/json",
 				dataType: 'json',
 				success: function(data){
+						console.log('SUCCESS!');
 						console.log(data);
-					
+						that.transitionTo('overview');
 				},
 				error: function(xhr, status, err){
 				  console.error(xhr, status, err.message);
+				  that.setState({
+				    login: false 
+				  });
 				}
 			});
 
@@ -23987,18 +23723,24 @@
 			return (
 				React.createElement("div", null, 
 					React.createElement("h2", null, "Sign Up"), 
-					React.createElement("p", null, "Create a new user account here. If you already have an account, click bellow"), 
+					React.createElement("p", null, "Please create a new account or continue to Login"), 
 					React.createElement("div", null, React.createElement(Link, {to: "signin", className: "btn btn-primary"}, "Signin")), 
-					React.createElement("form", {className: "form text-center"}, 
-						React.createElement("div", {className: "username"}, "Username:", React.createElement("input", {ref: "username", rows: "1", cols: "20", type: "text", className: "form-control", placeholder: "Username"})), 
-						React.createElement("div", {className: "password"}, "Password: ", React.createElement("input", {ref: "password", rows: "1", cols: "20", type: "password", className: "form-control", placeholder: "Password"})), 
-						React.createElement("button", {onClick: this.signup}, "Submit")
-					)
+						React.createElement("form", {className: "form-inline"}, 
+							React.createElement("div", {className: "form-group"}, 
+								React.createElement("label", null, "Username"), 
+		  	  			React.createElement("input", {ref: "username", type: "username", className: "form-control", placeholder: "Username"})
+		    			), 
+		    			React.createElement("div", {className: "form-group"}, 
+								React.createElement("label", null, "Password"), 
+		    				React.createElement("input", {ref: "password", type: "password", className: "form-control", placeholder: "Password"})
+		    			), 
+							React.createElement("button", {onClick: this.signup, className: "btn btn-primary"}, "Submit")
+						), 
+						this.state.login === false ? React.createElement("p", {className: "error-msg"}, "Username is taken, please try again") : null
 				)
 			)
-
 		}
-	});	
+	});
 
 	module.exports= SignUpView;
 

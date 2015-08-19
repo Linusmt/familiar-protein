@@ -46,7 +46,7 @@ var App = React.createClass({
 
   render: function() {
     return (
-      <div id='wrapper'> 
+      <div id='wrapper'>
 
         <div id='sidebar-wrapper'>
           <ul className='sidebar-nav'>
@@ -85,9 +85,10 @@ var routes = (
   <Route name="app" path="/" handler={App}>
     <Route name="tutorial" path="/tutorial" handler={TutorialView}/>
     <Route name="question" path="/question/:qNumber" handler={DetailView}/>
-    <Route name="signin" path= "/signin" handler = {SignInView}/>
-    <Route name="signup" path= "/signup" handler = {SignUpView}/>
-    <DefaultRoute name="default" handler={OverView} />
+    <Route name="signin" path= "/signin" handler={SignInView}/>
+    <Route name="signup" path= "/signup" handler={SignUpView}/>
+    <Route name="overview" path= "/profile" handler={OverView}/>
+    <DefaultRoute name="default" handler={SignInView}/>
   </Route>
 );
 

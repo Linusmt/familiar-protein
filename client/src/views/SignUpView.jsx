@@ -9,10 +9,18 @@ var Link = Router.Link;
 var SignUpView = React.createClass({
 	mixins: [Navigation],
 
+	getInitialState: function(){
+    return {
+      login: true
+    };
+  },
+
 	signup: function(){
 		var username = React.findDOMNode(this.refs.username).value;
 		var password = React.findDOMNode(this.refs.password).value;
 		var data = [username, password];
+		var that = this;
+
 		$.ajax({
 			url:window.location.origin + '/signup',
 			method: 'POST',
@@ -20,11 +28,15 @@ var SignUpView = React.createClass({
 			contentType:"application/json",
 			dataType: 'json',
 			success: function(data){
+					console.log('SUCCESS!');
 					console.log(data);
-				
+					that.transitionTo('overview');
 			},
 			error: function(xhr, status, err){
 			  console.error(xhr, status, err.message);
+			  that.setState({
+			    login: false 
+			  });
 			}
 		});
 
@@ -34,17 +46,23 @@ var SignUpView = React.createClass({
 		return (
 			<div> 
 				<h2>Sign Up</h2>
-				<p>Create a new user account here. If you already have an account, click bellow</p>
+				<p>Please create a new account or continue to Login</p>
 				<div><Link to="signin"  className="btn btn-primary">Signin</Link></div>
-				<form className="form text-center">
-					<div className="username">Username:<input ref="username" rows="1" cols="20" type="text" className="form-control" placeholder="Username"></input></div>
-					<div className="password">Password: <input ref="password" rows="1" cols="20" type="password" className="form-control" placeholder="Password"></input></div>
-					<button onClick={this.signup}>Submit</button>
-				</form>
+					<form className="form-inline">
+						<div className="form-group">
+							<label>Username</label>
+	  	  			<input ref="username" type="username" className="form-control" placeholder="Username" />
+	    			</div>
+	    			<div className="form-group">
+							<label>Password</label>
+	    				<input ref="password" type="password" className="form-control" placeholder="Password" />
+	    			</div>
+						<button onClick={this.signup} className="btn btn-primary">Submit</button>
+					</form>
+					{this.state.login === false ? <p className="error-msg">Username is taken, please try again</p> : null}
 			</div>
 		)
-
 	}
-});	
+});
 
 module.exports= SignUpView;

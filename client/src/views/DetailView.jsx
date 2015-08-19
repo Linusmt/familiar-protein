@@ -120,6 +120,8 @@ var DetailView = React.createClass({
               <Timer stop={this.state.solved} />
             </div>
 
+          <div className="col-sm-2">
+            <Link to="overview" className="btn btn-primary back">Back</Link>
           </div>
 
           <form className="form-inline text-center">
@@ -153,6 +155,8 @@ var DetailView = React.createClass({
     )
   }
 });
+
+// timer component for keeping track of how long a user spends on a question
 
 var Timer = React.createClass({
   getInitialState: function() {
