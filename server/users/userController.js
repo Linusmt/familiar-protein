@@ -98,6 +98,6 @@ module.exports = {
 	signin: signin,
 	signup: signup,
 	submitSolution: submitSolution,
-	getSolutions: getSolutions
+	getSolutions: getSolutions,
 	leaderboard: leaderboard
 }

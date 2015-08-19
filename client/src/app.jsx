@@ -62,7 +62,7 @@ var App = React.createClass({
               <Link to='default'>Profile</Link>
             </li>
             <li>
-              <Link to='default'>Leaderboard</Link>
+              <Link to='leaderboard'>Leaderboard</Link>
             </li>
             <li>
               <Link to='default'>Solutions</Link>
@@ -91,8 +91,7 @@ var routes = (
     <Route name="overview" path= "/profile" handler={OverView}/>
     <Route name="signin" path= "/signin" handler = {SignInView}/>
     <Route name="signup" path= "/signup" handler = {SignUpView}/>
-    <Route name="leaderboard" path= "leaderboard" handler= {LeaderBoardView}/>
-    <DefaultRoute name="default" handler={OverView} />
+    <Route name="leaderboard" path= "leaderboard" handler= {LeaderBoardView}/>    <DefaultRoute name="default" handler={OverView} />
   </Route>
 );
 
