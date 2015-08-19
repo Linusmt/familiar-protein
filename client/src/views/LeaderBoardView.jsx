@@ -4,7 +4,7 @@ var Navigation = Router.Navigation;
 var Link = Router.Link;
 
 var LeaderBoardView = React.createClass({
-	mixis: [Navigation],
+	mixins: [Navigation],
 
 	getInitialState: function(){
 		return {
@@ -30,8 +30,6 @@ var LeaderBoardView = React.createClass({
 	},
 
 	render: function(){
-
-
 		//Scores should be returned as an array with each element being an object
 		//The object should hold the username and the score
 		var counter = 0;
