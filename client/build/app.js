@@ -50,9 +50,9 @@
 	var DetailView = __webpack_require__(197);
 	var SignInView = __webpack_require__(198);
 	var SignUpView = __webpack_require__(199);
-	var TutorialView = __webpack_require__(201);
-	var SolutionView = __webpack_require__(202)
-	var LeaderBoardView = __webpack_require__(200);
+	var TutorialView = __webpack_require__(200);
+	var SolutionView = __webpack_require__(201)
+	var LeaderBoardView = __webpack_require__(202);
 
 	var Router = __webpack_require__(158);
 	var RouteHandler = Router.RouteHandler;
@@ -23993,20 +23993,30 @@
 			return (
 				React.createElement("div", {id: "page-content-wrapper"}, 
 	        React.createElement("div", {className: "container-fluid"}, 
-						React.createElement("h2", null, "Sign In"), 
-						React.createElement("form", {className: "form-inline"}, 
-							React.createElement("div", {className: "form-group"}, 
-								React.createElement("label", null, "Username"), 
-		  	  			React.createElement("input", {ref: "username", type: "username", className: "form-control", placeholder: "Username"})
-		    			), 
-		    			React.createElement("div", {className: "form-group"}, 
-								React.createElement("label", null, "Password "), 
-		    				React.createElement("input", {ref: "password", type: "password", className: "form-control", placeholder: "Password"})
-		    			), 
-							React.createElement("button", {onClick: this.signin, className: "btn btn-primary"}, "Submit")
-						), 
-						React.createElement(Link, {to: "signup", className: "btn btn-primary"}, "Signup"), 
-						this.state.login === false ? React.createElement("p", {className: "error-msg"}, "Login incorrect, please try again") : null
+
+					React.createElement("h2", null, "Sign In"), 
+
+					React.createElement("form", {className: "form-horizontal"}, 
+					  React.createElement("div", {className: "form-group"}, 
+					    React.createElement("label", {className: "col-sm-2 control-label"}, "Username"), 
+					    React.createElement("div", {className: "col-sm-10"}, 
+					      React.createElement("input", {className: "form-control", placeholder: "Username"})
+					    )
+					  ), 
+					  React.createElement("div", {className: "form-group"}, 
+					    React.createElement("label", {className: "col-sm-2 control-label"}, "Password"), 
+					    React.createElement("div", {className: "col-sm-10"}, 
+					      React.createElement("input", {type: "password", className: "form-control", placeholder: "Password"})
+					    )
+					  ), 
+					  React.createElement("div", {className: "form-group"}, 
+					    React.createElement("div", {className: "col-sm-offset-2 col-sm-10"}, 
+					      React.createElement("button", {onClick: this.signin, className: "btn btn-default"}, "Log In")
+					    )
+					  )
+					 ), 
+						this.state.login === false ? React.createElement("p", {className: "error-msg"}, "Login incorrect, please try again") : null, 
+					React.createElement("p", null, "Need an account? Click ", React.createElement(Link, {to: "signup"}, "here."))
 					)
 				)
 			)
@@ -24046,7 +24056,7 @@
 				url:window.location.origin + '/signup',
 				method: 'POST',
 				data: JSON.stringify(data),
-				contentType:"application/json",
+				contentType: "application/json",
 				dataType: 'json',
 				success: function(data){
 						console.log('SUCCESS!');
@@ -24054,6 +24064,7 @@
 						that.transitionTo('overview');
 				},
 				error: function(xhr, status, err){
+					alert( xhr.responseText);
 				  console.error(xhr, status, err.message);
 				  that.setState({
 				    login: false 
@@ -24065,22 +24076,33 @@
 
 		render: function(){
 			return (
-				React.createElement("div", null, 
+				React.createElement("div", {id: "page-content-wrapper"}, 
+	        React.createElement("div", {className: "container-fluid"}, 
+
 					React.createElement("h2", null, "Sign Up"), 
-					React.createElement("p", null, "Please create a new account or continue to Login"), 
-					React.createElement("div", null, React.createElement(Link, {to: "signin", className: "btn btn-primary"}, "Signin")), 
-						React.createElement("form", {className: "form-inline"}, 
-							React.createElement("div", {className: "form-group"}, 
-								React.createElement("label", null, "Username"), 
-		  	  			React.createElement("input", {ref: "username", type: "username", className: "form-control", placeholder: "Username"})
-		    			), 
-		    			React.createElement("div", {className: "form-group"}, 
-								React.createElement("label", null, "Password"), 
-		    				React.createElement("input", {ref: "password", type: "password", className: "form-control", placeholder: "Password"})
-		    			), 
-							React.createElement("button", {onClick: this.signup, className: "btn btn-primary"}, "Submit")
-						), 
-						this.state.login === false ? React.createElement("p", {className: "error-msg"}, "Username is taken, please try again") : null
+
+					React.createElement("form", {className: "form-horizontal"}, 
+					  React.createElement("div", {className: "form-group"}, 
+					    React.createElement("label", {className: "col-sm-2 control-label"}, "Username"), 
+					    React.createElement("div", {className: "col-sm-10"}, 
+					      React.createElement("input", {className: "form-control", placeholder: "Username"})
+					    )
+					  ), 
+					  React.createElement("div", {className: "form-group"}, 
+					    React.createElement("label", {className: "col-sm-2 control-label"}, "Password"), 
+					    React.createElement("div", {className: "col-sm-10"}, 
+					      React.createElement("input", {type: "password", className: "form-control", placeholder: "Password"})
+					    )
+					  ), 
+					  React.createElement("div", {className: "form-group"}, 
+					    React.createElement("div", {className: "col-sm-offset-2 col-sm-10"}, 
+					      React.createElement("button", {onClick: this.signup, className: "btn btn-default"}, "Sign Up")
+					    )
+					  )
+					 ), 
+					 this.state.login === false ? React.createElement("p", {className: "error-msg"}, "Username is taken, please try again") : null, 
+					React.createElement("p", null, "Already have an account? Click ", React.createElement(Link, {to: "signin"}, "here to login."))
+					)
 				)
 			)
 		}
@@ -24090,72 +24112,6 @@
 
 /***/ },
 /* 200 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-	var Router = __webpack_require__(158);
-	var Navigation = Router.Navigation;
-	var Link = Router.Link;
-
-	var LeaderBoardView = React.createClass({displayName: "LeaderBoardView",
-		mixis: [Navigation],
-
-		getInitialState: function(){
-			return {
-				scores:  []
-			};
-		},
-
-		componentWillMount : function(callback){
-			var that = this;
-			$.ajax({
-				url:window.location.origin + '/leaderboard',
-				method: 'GET',
-				dataType: 'json',
-				success: function(data){
-					if(this.isMounted()){
-						that.setState({scores:data});
-					}
-				}.bind(this),
-				error: function(xhr, status, err){
-				  console.error(xhr, status, err.message);
-				}
-			});
-		},
-
-
-
-		render: function(){
-
-
-			//Scores should be returned as an array with each element being an object
-			//The object should hold the username and the score
-			var scores = this.state.scores.map(function(score){
-				return (
-					React.createElement("tr", {key: score.username, className: "question"}, 
-						React.createElement("td", null, React.createElement("b", null, score.username)), 
-						React.createElement("td", null, React.createElement("b", null, score.totalScore))
-					)
-				)
-			});
-
-			return (
-				React.createElement("div", null, 
-					React.createElement("h2", null, " Leaderboard "), 
-					React.createElement("table", {className: "questionContainer table table-hover"}, 
-						React.createElement("tbody", null, 
-							scores
-						)
-					)
-				)
-			)
-		}
-	});
-
-	module.exports = LeaderBoardView;
-
-/***/ },
-/* 201 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1); 
@@ -24211,7 +24167,7 @@
 	module.exports = TutorialView;
 
 /***/ },
-/* 202 */
+/* 201 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -24301,6 +24257,72 @@
 
 	module.exports = SolutionView;
 
+
+/***/ },
+/* 202 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var Router = __webpack_require__(158);
+	var Navigation = Router.Navigation;
+	var Link = Router.Link;
+
+	var LeaderBoardView = React.createClass({displayName: "LeaderBoardView",
+		mixis: [Navigation],
+
+		getInitialState: function(){
+			return {
+				scores:  []
+			};
+		},
+
+		componentWillMount : function(callback){
+			var that = this;
+			$.ajax({
+				url:window.location.origin + '/leaderboard',
+				method: 'GET',
+				dataType: 'json',
+				success: function(data){
+					if(this.isMounted()){
+						that.setState({scores:data});
+					}
+				}.bind(this),
+				error: function(xhr, status, err){
+				  console.error(xhr, status, err.message);
+				}
+			});
+		},
+
+
+
+		render: function(){
+
+
+			//Scores should be returned as an array with each element being an object
+			//The object should hold the username and the score
+			var scores = this.state.scores.map(function(score){
+				return (
+					React.createElement("tr", {key: score.username, className: "question"}, 
+						React.createElement("td", null, React.createElement("b", null, score.username)), 
+						React.createElement("td", null, React.createElement("b", null, score.totalScore))
+					)
+				)
+			});
+
+			return (
+				React.createElement("div", null, 
+					React.createElement("h2", null, " Leaderboard "), 
+					React.createElement("table", {className: "questionContainer table table-hover"}, 
+						React.createElement("tbody", null, 
+							scores
+						)
+					)
+				)
+			)
+		}
+	});
+
+	module.exports = LeaderBoardView;
 
 /***/ }
 /******/ ]);
