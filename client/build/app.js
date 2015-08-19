@@ -99,7 +99,7 @@
 	        React.createElement("div", {id: "sidebar-wrapper"}, 
 	          React.createElement("ul", {className: "sidebar-nav"}, 
 	            React.createElement("li", {className: "sidebar-brand"}, 
-	              React.createElement(Link, {to: "default"}, "Regexr")
+	              React.createElement(Link, {to: "default"}, "Regex Game")
 	            ), 
 	            React.createElement("li", null, 
 	              React.createElement(Link, {to: "default"}, "Questions")
@@ -24165,9 +24165,45 @@
 	var TutorialView = React.createClass({displayName: "TutorialView", 
 	  render: function(){ 
 	    return (
-	      React.createElement("div", null, "Hello")
+	      React.createElement("div", {id: "page-content-wrapper"}, 
+	        React.createElement("div", {className: "container-fluid"}, 
+	        React.createElement("h2", null, "Cheatsheet"), 
+	          React.createElement("table", {className: "table table-condensed"}, 
+	            React.createElement("tr", {className: "info"}, React.createElement("th", {colSpan: "2"}, "Character classes")), 
+	            React.createElement("tr", null, React.createElement("td", null, "."), React.createElement("td", null, "any character except newline")), 
+	            React.createElement("tr", null, React.createElement("td", null, "\\w  \\d  \\s"), React.createElement("td", null, "word, digit, whitespace")), 
+	            React.createElement("tr", null, React.createElement("td", null, "\\W  \\D  \\S"), React.createElement("td", null, "not word, digit, whitespace")), 
+	            React.createElement("tr", null, React.createElement("td", null, "[abc]"), React.createElement("td", null, "any of a, b, or c")), 
+	            React.createElement("tr", null, React.createElement("td", null, "[^abc]"), React.createElement("td", null, "not a, b, or c")), 
+	            React.createElement("tr", null, React.createElement("td", null, "[a-g]"), React.createElement("td", null, "character between a & g")), 
 
+	            React.createElement("tr", {className: "info"}, React.createElement("th", {colSpan: "2"}, "Anchors")), 
+	            React.createElement("tr", null, React.createElement("td", null, "^abc$"), React.createElement("td", null, "start / end of the string")), 
+	            React.createElement("tr", null, React.createElement("td", null, "\\b"), React.createElement("td", null, "word boundary")), 
 
+	            React.createElement("tr", {className: "info"}, React.createElement("th", {colSpan: "2"}, "Escaped characters")), 
+	            React.createElement("tr", null, React.createElement("td", null, "\\.  \\*  \\\\"), React.createElement("td", null, "escaped special characters")), 
+	            React.createElement("tr", null, React.createElement("td", null, "\\t  \\n  \\r"), React.createElement("td", null, "tab, linefeed, carriage return")), 
+	            React.createElement("tr", null, React.createElement("td", null, "\\u00A9"), React.createElement("td", null, "unicode escaped ©")), 
+
+	            React.createElement("tr", {className: "info"}, React.createElement("th", {colSpan: "2"}, "Groups & Lookaround")), 
+	            React.createElement("tr", null, React.createElement("td", null, "(abc)"), React.createElement("td", null, "capture group")), 
+	            React.createElement("tr", null, React.createElement("td", null, "\\1"), React.createElement("td", null, "backreference to group #1")), 
+	            React.createElement("tr", null, React.createElement("td", null, "(?:abc)"), React.createElement("td", null, "non-capturing group")), 
+	            React.createElement("tr", null, React.createElement("td", null, "(?=abc)"), React.createElement("td", null, "positive lookahead")), 
+	            React.createElement("tr", null, React.createElement("td", null, "(?!abc)"), React.createElement("td", null, "negative lookahead")), 
+
+	            React.createElement("tr", {className: "info"}, React.createElement("th", {colSpan: "2"}, "Quantifiers & Alternation")), 
+	            React.createElement("tr", null, React.createElement("td", null, "a*  a+  a?"), React.createElement("td", null, "0 or more, 1 or more, 0 or 1")), 
+	            React.createElement("tr", null, React.createElement("td", null, 'a{5} a{2, }'), React.createElement("td", null, "exactly five, two or more")), 
+	            React.createElement("tr", null, React.createElement("td", null, "a", 1,3), React.createElement("td", null, "between one & three")), 
+	            React.createElement("tr", null, React.createElement("td", null, 'a+? a{2,}?'), React.createElement("td", null, "match as few as possible")), 
+	            React.createElement("tr", null, React.createElement("td", null, "ab|cd"), React.createElement("td", null, "match ab or cd"))
+
+	          )
+
+	        )
+	      )
 	      )
 	  }
 	});
