@@ -116,6 +116,7 @@ var routes = (
     <Route name="signup" path= "/signup" handler = {SignUpView}/>
     <Route name="leaderboard" path= "leaderboard" handler= {LeaderBoardView}/>
     <DefaultRoute name="default" handler={SignInView} />
+
   </Route>
 );
 

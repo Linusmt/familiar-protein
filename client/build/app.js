@@ -162,6 +162,7 @@
 	    React.createElement(Route, {name: "signup", path: "/signup", handler: SignUpView}), 
 	    React.createElement(Route, {name: "leaderboard", path: "leaderboard", handler: LeaderBoardView}), 
 	    React.createElement(DefaultRoute, {name: "default", handler: SignInView})
+
 	  )
 	);
 
