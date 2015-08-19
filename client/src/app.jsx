@@ -9,9 +9,15 @@ var Router = require('react-router');
 var RouteHandler = Router.RouteHandler;
 var DefaultRoute = Router.DefaultRoute;
 var Route = Router.Route;
+var Link = Router.Link;
+var Navigation = Router.Navigation;
+
+
 
 
 var App = React.createClass({
+  mixins: [Navigation],
+
   getInitialState: function(){
     return {
       questions: []
@@ -41,8 +47,27 @@ var App = React.createClass({
 
   render: function() {
     return (
-      <div className="container">
-        <h2 className="title">Regex Game</h2>
+      <div id='wrapper'> 
+
+        <div id='sidebar-wrapper'>
+          <ul className='sidebar-nav'>
+            <li className='sidebar-brand'>
+              <Link to='default'>Regexr</Link>
+            </li>
+            <li>
+              <Link to='default'>Questions</Link>
+            </li>
+            <li>
+              <Link to='default'>Profile</Link>
+            </li>
+            <li>
+              <Link to='default'>Leaderboard</Link>
+            </li>
+            <li>
+              <Link to='default'>Solutions</Link>
+            </li>
+          </ul>
+        </div>
         <RouteHandler questions={this.state.questions}/>
       </div>
     )
