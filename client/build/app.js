@@ -24182,7 +24182,7 @@
 	    return {data:null, userData:null}
 	  },
 
-	  componentDidMount: function() {
+	  getSolutionData: function() {
 	    var question = this.props.questions[this.props.params.qNumber - 1];
 	    var data = {
 	      "qNumber": question.qNumber,
@@ -24200,6 +24200,13 @@
 	          console.error(this.props.url, status, err.toString());
 	        }.bind(this)
 	      });
+	  },
+
+	  getUserData: function() {
+	    var question = this.props.questions[this.props.params.qNumber - 1];
+	    var data = {
+	      "qNumber": question.qNumber,
+	    };
 	    $.ajax({
 	      url: window.location.origin + '/getUserData',
 	      contentType:"application/json",
@@ -24216,7 +24223,13 @@
 	    });
 	  },
 
+	  componentDidMount: function() {
+	    this.getSolutionData();
+	    this.getUserData();
+	  },
+
 	  upVote: function(i) {
+	    $(React.findDOMNode(this.refs[i])).prop('disabled', true)
 	    var question = this.props.questions[this.props.params.qNumber - 1];
 	    var userId = this.state.data[i]._id
 	    var data = {"userId": userId, "qNumber": question.qNumber};
@@ -24227,7 +24240,7 @@
 	      type: 'POST',
 	      data: JSON.stringify(data),
 	      success: function(data) {
-	        this.componentDidMount();
+	        this.getSolutionData();
 	      }.bind(this),
 	      error: function(xhr, status, err) {
 	        console.error(this.props.url, status, err.toString());
@@ -24255,7 +24268,7 @@
 	            React.createElement("td", null, React.createElement("p", null, "User: ", user.username)), 
 	            React.createElement("td", null, React.createElement("p", null, "Solution: ", userSolution.solution)), 
 	            React.createElement("td", null, React.createElement("p", null, "Votes: ", userSolution.votes)), 
-	            React.createElement("td", null, React.createElement("p", null, React.createElement("button", {onClick: this.upVote.bind(this, index), className: "btn btn-primary"}, "Vote")))
+	            React.createElement("td", null, React.createElement("p", null, React.createElement("button", {onClick: this.upVote.bind(this, index), ref: index, className: "btn btn-primary"}, "Vote")))
 	          )
 	        )
 	      }, this);

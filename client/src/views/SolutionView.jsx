@@ -10,7 +10,7 @@ var SolutionView = React.createClass({
     return {data:null, userData:null}
   },
 
-  componentDidMount: function() {
+  getSolutionData: function() {
     var question = this.props.questions[this.props.params.qNumber - 1];
     var data = {
       "qNumber": question.qNumber,
@@ -28,6 +28,13 @@ var SolutionView = React.createClass({
           console.error(this.props.url, status, err.toString());
         }.bind(this)
       });
+  },
+
+  getUserData: function() {
+    var question = this.props.questions[this.props.params.qNumber - 1];
+    var data = {
+      "qNumber": question.qNumber,
+    };
     $.ajax({
       url: window.location.origin + '/getUserData',
       contentType:"application/json",
@@ -44,7 +51,13 @@ var SolutionView = React.createClass({
     });
   },
 
+  componentDidMount: function() {
+    this.getSolutionData();
+    this.getUserData();
+  },
+
   upVote: function(i) {
+    $(React.findDOMNode(this.refs[i])).prop('disabled', true)
     var question = this.props.questions[this.props.params.qNumber - 1];
     var userId = this.state.data[i]._id
     var data = {"userId": userId, "qNumber": question.qNumber};
@@ -55,7 +68,7 @@ var SolutionView = React.createClass({
       type: 'POST',
       data: JSON.stringify(data),
       success: function(data) {
-        this.componentDidMount();
+        this.getSolutionData();
       }.bind(this),
       error: function(xhr, status, err) {
         console.error(this.props.url, status, err.toString());
@@ -83,7 +96,7 @@ var SolutionView = React.createClass({
             <td><p>User: {user.username}</p></td>
             <td><p>Solution: {userSolution.solution}</p></td>
             <td><p>Votes: {userSolution.votes}</p></td>
-            <td><p><button onClick={this.upVote.bind(this, index)} className="btn btn-primary">Vote</button></p></td>
+            <td><p><button onClick={this.upVote.bind(this, index)} ref={index} className="btn btn-primary">Vote</button></p></td>
           </tr>
         )
       }, this);
