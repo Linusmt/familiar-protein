@@ -50,21 +50,21 @@ var SignInView = React.createClass({
 		return (
 			<div id='page-content-wrapper'> 
         <div className='container-fluid'>
-
-				<h2>Sign In</h2>
-				<form className="form-inline">
-					<div className="form-group">
-						<label>Username</label>
-  	  			<input ref="username" type="username" className="form-control" placeholder="Username" />
-    			</div>
-    			<div className="form-group">
-						<label>Password </label>
-    				<input ref="password" type="password" className="form-control" placeholder="Password" />
-    			</div>
-					<button onClick={this.signin} className="btn btn-primary">Submit</button>
-				</form>
-				<Link to="signup" className="btn btn-primary">Signup</Link>
-				{this.state.login === false ? <p className="error-msg">Login incorrect, please try again</p> : null}	
+					<h2>Sign In</h2>
+					<form className="form-inline">
+						<div className="form-group">
+							<label>Username</label>
+	  	  			<input ref="username" type="username" className="form-control" placeholder="Username" />
+	    			</div>
+	    			<div className="form-group">
+							<label>Password </label>
+	    				<input ref="password" type="password" className="form-control" placeholder="Password" />
+	    			</div>
+						<button onClick={this.signin} className="btn btn-primary">Submit</button>
+					</form>
+					<Link to="signup" className="btn btn-primary">Signup</Link>
+					{this.state.login === false ? <p className="error-msg">Login incorrect, please try again</p> : null}
+				</div>
 			</div>
 		)
 	}
