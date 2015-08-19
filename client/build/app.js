@@ -20540,7 +20540,7 @@
 	  componentDidMount: function() {
 	    var data = {}
 	    $.ajax({
-	        url: window.location.origin + '/getSolutions',
+	        url: window.location.origin + '/getUserData',
 	        contentType:"application/json",
 	        dataType: 'json',
 	        type: 'POST',
@@ -23811,6 +23811,7 @@
 
 	  handleSubmit: function(e) {
 	    e.preventDefault();
+	    $(React.findDOMNode(this.refs.submitButton)).prop('disabled', true)
 	    var solution = React.findDOMNode(this.refs.solutionText).value;
 	    var question = this.props.questions[this.props.params.qNumber - 1];
 	    var data = {
@@ -23865,7 +23866,7 @@
 
 	            React.createElement("form", {className: "form-inline text-center", onSubmit: this.handleSubmit}, 
 	              React.createElement("span", {className: "solution"}, "/", React.createElement("textarea", {ref: "solutionText", onChange: this.setRegex, rows: "1", cols: "50", type: "text", className: "regex form-control", placeholder: "Regex solution..."}), "/"), 
-	                this.state.solved ? React.createElement("p", null, React.createElement("button", {className: "btn btn-success"}, 'Submit Solution')) : null, 
+	                this.state.solved ? React.createElement("p", null, React.createElement("button", {ref: "submitButton", className: "btn btn-success"}, 'Submit Solution')) : null, 
 	                this.state.solved === null ? React.createElement("p", {className: "error-msg"}, "Please provide valid regular expression") : null, 
 	                this.state.solved ? React.createElement("h3", {className: "success"}, "Success!!! Solved All Test Cases!") : null
 	            ), 
@@ -24000,13 +24001,13 @@
 					  React.createElement("div", {className: "form-group"}, 
 					    React.createElement("label", {className: "col-sm-2 control-label"}, "Username"), 
 					    React.createElement("div", {className: "col-sm-10"}, 
-					      React.createElement("input", {className: "form-control", placeholder: "Username"})
+					      React.createElement("input", {ref: "username", className: "form-control", placeholder: "Username"})
 					    )
 					  ), 
 					  React.createElement("div", {className: "form-group"}, 
 					    React.createElement("label", {className: "col-sm-2 control-label"}, "Password"), 
 					    React.createElement("div", {className: "col-sm-10"}, 
-					      React.createElement("input", {type: "password", className: "form-control", placeholder: "Password"})
+					      React.createElement("input", {ref: "password", type: "password", className: "form-control", placeholder: "Password"})
 					    )
 					  ), 
 					  React.createElement("div", {className: "form-group"}, 
@@ -24085,13 +24086,13 @@
 					  React.createElement("div", {className: "form-group"}, 
 					    React.createElement("label", {className: "col-sm-2 control-label"}, "Username"), 
 					    React.createElement("div", {className: "col-sm-10"}, 
-					      React.createElement("input", {className: "form-control", placeholder: "Username"})
+					      React.createElement("input", {ref: "username", className: "form-control", placeholder: "Username"})
 					    )
 					  ), 
 					  React.createElement("div", {className: "form-group"}, 
 					    React.createElement("label", {className: "col-sm-2 control-label"}, "Password"), 
 					    React.createElement("div", {className: "col-sm-10"}, 
-					      React.createElement("input", {type: "password", className: "form-control", placeholder: "Password"})
+					      React.createElement("input", {ref: "password", type: "password", className: "form-control", placeholder: "Password"})
 					    )
 					  ), 
 					  React.createElement("div", {className: "form-group"}, 
@@ -24179,14 +24180,14 @@
 	  mixins: [Navigation],
 
 	  getInitialState: function(){
-	    return {data:null}
+	    return {data:null, userData:null}
 	  },
 
-	  componentDidMount: function() {
+	  getSolutionData: function() {
 	    var question = this.props.questions[this.props.params.qNumber - 1];
 	    var data = {
 	      "qNumber": question.qNumber,
-	    }
+	    };
 	    $.ajax({
 	        url: window.location.origin + '/getSolutions',
 	        contentType:"application/json",
@@ -24202,6 +24203,52 @@
 	      });
 	  },
 
+	  getUserData: function() {
+	    var question = this.props.questions[this.props.params.qNumber - 1];
+	    var data = {
+	      "qNumber": question.qNumber,
+	    };
+	    $.ajax({
+	      url: window.location.origin + '/getUserData',
+	      contentType:"application/json",
+	      dataType: 'json',
+	      type: 'POST',
+	      data: JSON.stringify(data),
+	      success: function(data) {
+	        this.setState({userData: data});
+
+	      }.bind(this),
+	      error: function(xhr, status, err) {
+	        console.error(this.props.url, status, err.toString());
+	      }.bind(this)
+	    });
+	  },
+
+	  componentDidMount: function() {
+	    this.getSolutionData();
+	    this.getUserData();
+	  },
+
+	  upVote: function(i) {
+	    $(React.findDOMNode(this.refs[i])).prop('disabled', true)
+	    var question = this.props.questions[this.props.params.qNumber - 1];
+	    var userId = this.state.data[i]._id
+	    var data = {"userId": userId, "qNumber": question.qNumber};
+	    $.ajax({
+	      url: window.location.origin + '/upVote',
+	      contentType:"application/json",
+	      dataType: 'json',
+	      type: 'POST',
+	      data: JSON.stringify(data),
+	      success: function(data) {
+	        this.getSolutionData();
+	      }.bind(this),
+	      error: function(xhr, status, err) {
+	        console.error(this.props.url, status, err.toString());
+	      }.bind(this)
+	    });
+	  },
+
 
 	  returnToMenu: function() {
 	    this.props.goToQuestionMenu();
@@ -24209,26 +24256,32 @@
 
 	  render: function() {
 	    var question = this.props.questions[this.props.params.qNumber - 1];
-	    // var solutions = this.state.data.map(function(solution) {
-	    //   return (
-	    //     <tr>
-	    //       <td><p>{solution.user}</p></td>
-	    //       <td><p>{solution.solution}</p></td>
-	    //       <td><p>Points:{solution.votes}</p></td>
-	    //     </tr>
-	    //   )
-	    // });
-	    if (this.state.data) {
+	    if (this.state.data && this.state.userData) {
+	      var solutions = this.state.data.map(function(user, index) {
+	        var userSolution = {};
+	        for (var i = 0; i < user.questionSolved.length; i ++) {
+	          if (user.questionSolved[i].qNumber === question.qNumber) {
+	            userSolution = user.questionSolved[i];
+	          }
+	        }
+	        return (
+	          React.createElement("tr", null, 
+	            React.createElement("td", null, React.createElement("p", null, "User: ", user.username)), 
+	            React.createElement("td", null, React.createElement("p", null, "Solution: ", userSolution.solution)), 
+	            React.createElement("td", null, React.createElement("p", null, "Votes: ", userSolution.votes)), 
+	            React.createElement("td", null, React.createElement("p", null, React.createElement("button", {onClick: this.upVote.bind(this, index), ref: index, className: "btn btn-primary"}, "Vote")))
+	          )
+	        )
+	      }, this);
 	      var solution = '';
-	      for(var i = 0 ; i < this.state.data.questionSolved.length;i++) {
-	        if (this.state.data.questionSolved[i].qNumber === question.qNumber) {
-	          solution = this.state.data.questionSolved[i].solution;
+	      for(var i = 0 ; i < this.state.userData.questionSolved.length;i++) {
+	        if (this.state.userData.questionSolved[i].qNumber === question.qNumber) {
+	          solution = this.state.userData.questionSolved[i].solution;
 	        }
 	      } 
 	      return (
 	        React.createElement("div", {className: "question-solve"}, 
 	          React.createElement("div", {className: "row"}, 
-
 	            React.createElement("div", {className: "col-sm-10"}, 
 	              React.createElement("h2", null, question.title, " ", React.createElement("span", {className: "points"}, "Points: ", question.points)), 
 	              React.createElement("p", null, question.description)
@@ -24242,7 +24295,8 @@
 	              React.createElement("p", null, solution), 
 	              React.createElement("h4", null, "Other solutions:"), 
 	              React.createElement("table", {className: "questionContainer table table-hover"}, 
-	                React.createElement("tbody", null
+	                React.createElement("tbody", null, 
+	                  solutions
 	                )
 	              )
 	            )

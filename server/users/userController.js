@@ -83,22 +83,45 @@ var submitSolution = function(req, res) {
       }
       return res.json(model);
     });
+};
 
-
+var getUserData = function(req, res) {
+	var username = req.cookies.username
+	User.findOne({username:username}, function(err, data){
+		if(err){
+		 res.status(404).send();
+		} else {
+			res.status(200).send(data)
+		}
+	})
 };
 
 var getSolutions = function(req, res) {
-  var username = req.cookies.username;
-  User.findOne({
-    username: username
-  }, function(err, data) {
-    if (err) {
-      res.status(404).send();
-    } else {
-      res.status(200).send(data);
-    }
-  });
+	var qNumber = req.body.qNumber;
+	User.find({questionSolved:{$elemMatch:{"solved":true, "qNumber":qNumber}}}, function(err, data){
+		if (err) {
+			res.send(404).send();
+		} else {
+			res.status(200).send(data);
+		}
+	})
 };
+
+var upVote = function(req, res) {
+	var userId = req.body.userId;
+	var qNumber = req.body.qNumber;
+	User.update(
+     {"_id":userId, "questionSolved.qNumber": qNumber},
+     {$inc: {"questionSolved.$.votes": 1}},
+       function(err, model) {
+         if(err){
+        	console.log(err);
+        	return res.send(err);
+         }
+          return res.json(model);
+      });
+};
+
 
 var leaderboard = function(req, res){
 	User.find({}, function(err, data){
@@ -115,5 +138,7 @@ module.exports = {
 	signup: signup,
 	submitSolution: submitSolution,
 	getSolutions: getSolutions,
-	leaderboard: leaderboard
+	leaderboard: leaderboard,
+	getUserData: getUserData,
+	upVote: upVote
 };

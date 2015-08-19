@@ -98,6 +98,7 @@ var DetailView = React.createClass({
 
   handleSubmit: function(e) {
     e.preventDefault();
+    $(React.findDOMNode(this.refs.submitButton)).prop('disabled', true)
     var solution = React.findDOMNode(this.refs.solutionText).value;
     var question = this.props.questions[this.props.params.qNumber - 1];
     var data = {
@@ -152,7 +153,7 @@ var DetailView = React.createClass({
 
             <form className="form-inline text-center" onSubmit={this.handleSubmit}>
               <span className="solution">/<textarea ref="solutionText" onChange={this.setRegex} rows="1" cols="50" type="text" className="regex form-control" placeholder="Regex solution..."></textarea>/</span>
-                {this.state.solved ? <p><button className="btn btn-success">{'Submit Solution'}</button></p> : null}
+                {this.state.solved ? <p><button ref="submitButton" className="btn btn-success">{'Submit Solution'}</button></p> : null}
                 {this.state.solved === null ? <p className="error-msg">Please provide valid regular expression</p> : null}
                 {this.state.solved ? <h3 className="success">Success!!! Solved All Test Cases!</h3> : null}
             </form>

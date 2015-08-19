@@ -7,14 +7,14 @@ var SolutionView = React.createClass({
   mixins: [Navigation],
 
   getInitialState: function(){
-    return {data:null}
+    return {data:null, userData:null}
   },
 
-  componentDidMount: function() {
+  getSolutionData: function() {
     var question = this.props.questions[this.props.params.qNumber - 1];
     var data = {
       "qNumber": question.qNumber,
-    }
+    };
     $.ajax({
         url: window.location.origin + '/getSolutions',
         contentType:"application/json",
@@ -30,6 +30,52 @@ var SolutionView = React.createClass({
       });
   },
 
+  getUserData: function() {
+    var question = this.props.questions[this.props.params.qNumber - 1];
+    var data = {
+      "qNumber": question.qNumber,
+    };
+    $.ajax({
+      url: window.location.origin + '/getUserData',
+      contentType:"application/json",
+      dataType: 'json',
+      type: 'POST',
+      data: JSON.stringify(data),
+      success: function(data) {
+        this.setState({userData: data});
+
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error(this.props.url, status, err.toString());
+      }.bind(this)
+    });
+  },
+
+  componentDidMount: function() {
+    this.getSolutionData();
+    this.getUserData();
+  },
+
+  upVote: function(i) {
+    $(React.findDOMNode(this.refs[i])).prop('disabled', true)
+    var question = this.props.questions[this.props.params.qNumber - 1];
+    var userId = this.state.data[i]._id
+    var data = {"userId": userId, "qNumber": question.qNumber};
+    $.ajax({
+      url: window.location.origin + '/upVote',
+      contentType:"application/json",
+      dataType: 'json',
+      type: 'POST',
+      data: JSON.stringify(data),
+      success: function(data) {
+        this.getSolutionData();
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error(this.props.url, status, err.toString());
+      }.bind(this)
+    });
+  },
+
 
   returnToMenu: function() {
     this.props.goToQuestionMenu();
@@ -37,26 +83,32 @@ var SolutionView = React.createClass({
 
   render: function() {
     var question = this.props.questions[this.props.params.qNumber - 1];
-    // var solutions = this.state.data.map(function(solution) {
-    //   return (
-    //     <tr>
-    //       <td><p>{solution.user}</p></td>
-    //       <td><p>{solution.solution}</p></td>
-    //       <td><p>Points:{solution.votes}</p></td>
-    //     </tr>
-    //   )
-    // });
-    if (this.state.data) {
+    if (this.state.data && this.state.userData) {
+      var solutions = this.state.data.map(function(user, index) {
+        var userSolution = {};
+        for (var i = 0; i < user.questionSolved.length; i ++) {
+          if (user.questionSolved[i].qNumber === question.qNumber) {
+            userSolution = user.questionSolved[i];
+          }
+        }
+        return (
+          <tr>
+            <td><p>User: {user.username}</p></td>
+            <td><p>Solution: {userSolution.solution}</p></td>
+            <td><p>Votes: {userSolution.votes}</p></td>
+            <td><p><button onClick={this.upVote.bind(this, index)} ref={index} className="btn btn-primary">Vote</button></p></td>
+          </tr>
+        )
+      }, this);
       var solution = '';
-      for(var i = 0 ; i < this.state.data.questionSolved.length;i++) {
-        if (this.state.data.questionSolved[i].qNumber === question.qNumber) {
-          solution = this.state.data.questionSolved[i].solution;
+      for(var i = 0 ; i < this.state.userData.questionSolved.length;i++) {
+        if (this.state.userData.questionSolved[i].qNumber === question.qNumber) {
+          solution = this.state.userData.questionSolved[i].solution;
         }
       } 
       return (
         <div className="question-solve">
           <div className="row">
-
             <div className="col-sm-10">
               <h2>{question.title} <span className="points">Points: {question.points}</span></h2>
               <p>{question.description}</p>
@@ -71,6 +123,7 @@ var SolutionView = React.createClass({
               <h4>Other solutions:</h4>
               <table className="questionContainer table table-hover">
                 <tbody>
+                  {solutions}
                 </tbody>
               </table>
             </div>

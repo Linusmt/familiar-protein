@@ -11,7 +11,7 @@ var OverView = React.createClass({
   componentDidMount: function() {
     var data = {}
     $.ajax({
-        url: window.location.origin + '/getSolutions',
+        url: window.location.origin + '/getUserData',
         contentType:"application/json",
         dataType: 'json',
         type: 'POST',
