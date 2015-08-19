@@ -12,6 +12,8 @@ var DetailView = React.createClass({
     return {
       result: '',
       solved: false,
+      hintNo: -1, 
+      showHint: false
     };
   },
 
@@ -33,6 +35,25 @@ var DetailView = React.createClass({
     }
   },
 
+  displayHint: function(){ 
+    var question = this.props.questions[this.props.params.qNumber - 1];
+    var hNumber = this.state.hintNo
+    var hint = question['hints'][hNumber] || question['hints'][question['hints'].length - 1]
+    
+    return (
+     <p key={hint} className='displayedHint'>{hint}</p>
+    )
+
+  },
+
+  countHint: function(){ 
+    var temp = this.state.hintNo
+    this.setState({ 
+      hintNo: temp+1, 
+      showHint: true
+    })
+  },
+
   displayTestCases: function(string, condition) {
     var question = this.props.questions[this.props.params.qNumber - 1];
     return question[string].map(function(testCase) {
@@ -42,6 +63,7 @@ var DetailView = React.createClass({
     }.bind(this));
   },
 
+  //TODO: Impliment "next" button or automatically return to menu after question is solved
   returnToMenu: function() {
     this.setState({
       result: '',
@@ -74,6 +96,32 @@ var DetailView = React.createClass({
     }
   },
 
+  handleSubmit: function(e) {
+    e.preventDefault();
+    var solution = React.findDOMNode(this.refs.solutionText).value;
+    var question = this.props.questions[this.props.params.qNumber - 1];
+    var data = {
+      "qNumber": question.qNumber,
+      "points": question.points,
+      "solution":  solution
+    }
+
+    React.findDOMNode(this.refs.solutionText).value = 'Solution Submitted';
+    $.ajax({
+        url: window.location.origin + '/submitSolution',
+        contentType:"application/json",
+        dataType: 'json',
+        type: 'POST',
+        data: JSON.stringify(data),
+        success: function(data) {
+          console.log("Success");
+        }.bind(this),
+        error: function(xhr, status, err) {
+          console.error(this.props.url, status, err.toString());
+        }.bind(this)
+      });
+  },
+
   render: function() {
     var question = this.props.questions[this.props.params.qNumber - 1];
 
@@ -89,43 +137,52 @@ var DetailView = React.createClass({
     }
 
     return (
-      <div className="question-solve">
-        <div className="row">
-          <div className="col-sm-10">
-            <h2>{question.title}</h2>
-            <p>{question.description}</p>
-            <Timer stop={this.state.solved} />
+      <div id='page-content-wrapper'>
+        <div className='container-fluid'>
+          <div className="row">
+            <div className="col-lg-12">            
+              <h2>{question.title}<span className="points">Points:{question.points}</span></h2>
+              <p>{question.description}</p>
+              <Timer stop={this.state.solved} />
+            </div>
+
+            <div className="col-sm-2">
+              <Link to="overview" className="btn btn-primary back">Back</Link>
+            </div>
+
+            <form className="form-inline text-center" onSubmit={this.handleSubmit}>
+              <span className="solution">/<textarea ref="solutionText" onChange={this.setRegex} rows="1" cols="50" type="text" className="regex form-control" placeholder="Regex solution..."></textarea>/</span>
+                {this.state.solved ? <p><button className="btn btn-success">{'Submit Solution'}</button></p> : null}
+                {this.state.solved === null ? <p className="error-msg">Please provide valid regular expression</p> : null}
+                {this.state.solved ? <h3 className="success">Success!!! Solved All Test Cases!</h3> : null}
+            </form>
+
+            <div className="text-center"> 
+              <div className='btn btn-primary hints' onClick={this.countHint}>Hint</div>
+              <p></p>
+              {this.state.showHint ? this.displayHint() : null}
+            </div>
+
+            <div className="test-cases">
+
+              <p className="instruction">{'Make all words turn green to complete the challenge'}</p>
+              <div className="col-sm-6 text-center">
+                <h3>{'Should match'}</h3>
+                {this.displayTestCases('truthy', true)}
+              </div>
+              <div className="col-sm-6 text-center">
+                <h3>{'Should not match'}</h3>
+                {this.displayTestCases('falsy', false)}
+              </div>
+            </div>  
           </div>
-
-          <div className="col-sm-2">
-            <Link to="default" className="btn btn-primary back">Back</Link>
-          </div>
-        </div>
-
-        <form className="form-inline text-center">
-          <span className="solution">/<textarea ref="solutionText" onChange={this.setRegex} rows="1" cols="50" type="text" className="regex form-control" placeholder="Regex solution..."></textarea>/</span>
-
-          {this.state.solved === null ? <p className="error-msg">Please provide valid regular expression</p> : null}
-          {this.state.solved ? <h3 className="success">Success!!! Solved All Test Cases!</h3> : null}
-        </form>
-
-        <div className="test-cases">
-
-          <p className="instruction">{'Make all words turn green to complete the challenge'}</p>
-          <div className="col-sm-6 text-center">
-            <h3>{'Should match'}</h3>
-            {this.displayTestCases('truthy', true)}
-          </div>
-          <div className="col-sm-6 text-center">
-            <h3>{'Should not match'}</h3>
-            {this.displayTestCases('falsy', false)}
-          </div>
-
         </div>
       </div>
     )
   }
 });
+
+// timer component for keeping track of how long a user spends on a question
 
 var Timer = React.createClass({
   getInitialState: function() {
@@ -157,7 +214,6 @@ var Timer = React.createClass({
     if(seconds < 10) {
       seconds = '0'+ seconds;
     }
-
 
     return (
       <div>Time Elapsed: {minutes}:{seconds}</div>

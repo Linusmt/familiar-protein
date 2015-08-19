@@ -48,14 +48,22 @@
 
 	var OverView = __webpack_require__(157);
 	var DetailView = __webpack_require__(197);
+	var SignInView = __webpack_require__(198);
+	var SignUpView = __webpack_require__(199);
+	var TutorialView = __webpack_require__(200);
+	var SolutionView = __webpack_require__(201)
 
 	var Router = __webpack_require__(158);
 	var RouteHandler = Router.RouteHandler;
 	var DefaultRoute = Router.DefaultRoute;
 	var Route = Router.Route;
+	var Link = Router.Link;
+	var Navigation = Router.Navigation;
 
 
 	var App = React.createClass({displayName: "App",
+	  mixins: [Navigation],
+
 	  getInitialState: function(){
 	    return {
 	      questions: []
@@ -85,8 +93,34 @@
 
 	  render: function() {
 	    return (
-	      React.createElement("div", {className: "container"}, 
-	        React.createElement("h2", {className: "title"}, "Regex Game"), 
+	      React.createElement("div", {id: "wrapper"}, 
+
+	        React.createElement("div", {id: "sidebar-wrapper"}, 
+	          React.createElement("ul", {className: "sidebar-nav"}, 
+	            React.createElement("li", {className: "sidebar-brand"}, 
+	              React.createElement(Link, {to: "default"}, "Regexr")
+	            ), 
+	            React.createElement("li", null, 
+	              React.createElement(Link, {to: "default"}, "Questions")
+	            ), 
+	            React.createElement("li", null, 
+	              React.createElement(Link, {to: "default"}, "Profile")
+	            ), 
+	            React.createElement("li", null, 
+	              React.createElement(Link, {to: "default"}, "Leaderboard")
+	            ), 
+	            React.createElement("li", null, 
+	              React.createElement(Link, {to: "default"}, "Solutions")
+	            ), 
+	            React.createElement("li", null, 
+	              React.createElement(Link, {to: "tutorial"}, "Regex Cheatsheet")
+	            ), 
+	            React.createElement("li", null, 
+	              React.createElement(Link, {to: "signin"}, "Signin")
+	            )
+	          )
+	      
+	        ), 
 	        React.createElement(RouteHandler, {questions: this.state.questions})
 	      )
 	    )
@@ -96,7 +130,12 @@
 
 	var routes = (
 	  React.createElement(Route, {name: "app", path: "/", handler: App}, 
-	    React.createElement(Route, {name: "question", path: "/:qNumber", handler: DetailView}), 
+	    React.createElement(Route, {name: "tutorial", path: "/tutorial", handler: TutorialView}), 
+	    React.createElement(Route, {name: "question", path: "/question/:qNumber", handler: DetailView}), 
+	    React.createElement(Route, {name: "solution", path: "/solution/:qNumber", handler: SolutionView}), 
+	    React.createElement(Route, {name: "signin", path: "/signin", handler: SignInView}), 
+	    React.createElement(Route, {name: "signup", path: "/signup", handler: SignUpView}), 
+	    React.createElement(Route, {name: "overview", path: "/profile", handler: OverView}), 
 	    React.createElement(DefaultRoute, {name: "default", handler: OverView})
 	  )
 	);
@@ -20493,26 +20532,64 @@
 	var Link = Router.Link;
 
 	var OverView = React.createClass({displayName: "OverView",
+	  getInitialState: function(){
+	    return {data:null}
+	  },
+
+	  componentDidMount: function() {
+	    var data = {}
+	    $.ajax({
+	        url: window.location.origin + '/getSolutions',
+	        contentType:"application/json",
+	        dataType: 'json',
+	        type: 'POST',
+	        data: JSON.stringify(data),
+	        success: function(data) {
+	          this.setState({data: data});
+	        }.bind(this),
+	        error: function(xhr, status, err) {
+	          console.error(this.props.url, status, err.toString());
+	        }.bind(this)
+	      });
+	  },
+
 	  render: function() {
-	    var questions = this.props.questions.map(function(question) {
-	      return (
-	        React.createElement("tr", {key: question.qNumber, className: "question"}, 
-	          React.createElement("td", null, React.createElement("b", null, question.title)), 
-	          React.createElement("td", null, React.createElement("p", null, question.description)), 
-	          React.createElement("td", null, React.createElement(Link, {to: "question", params: {qNumber:question.qNumber}, className: "btn btn-primary"}, "Solve"))
+
+	    if (this.state.data) {
+	      var solvedArray = [];
+	      for (var i = 0; i < this.props.questions.length; i++) {
+	        for (var j = 0; j < this.state.data.questionSolved.length;j++) {
+	          if (this.state.data.questionSolved[j].qNumber === i+1 && this.state.data.questionSolved[j].solved) {
+	            solvedArray[i] = true;
+	          }
+	        }
+	      }
+	      var questions = this.props.questions.map(function(question, index) {
+	        return (
+	          React.createElement("tr", {key: question.qNumber, className: "question"}, 
+	            React.createElement("td", null, React.createElement("b", null, question.title)), 
+	            React.createElement("td", null, React.createElement("p", null, question.description)), 
+	            React.createElement("td", null, React.createElement("p", {className: "points"}, "Points:", question.points)), 
+	            solvedArray[index] ? React.createElement("td", null, React.createElement(Link, {to: "solution", params: {qNumber:question.qNumber}, className: "btn btn-success"}, "Complete")) : React.createElement("td", null, React.createElement(Link, {to: "question", params: {qNumber:question.qNumber}, className: "btn btn-primary"}, "Solve"))
+	          )
 	        )
-	      )
-	    });
+	      });
 
 	    return (
-	      React.createElement("div", null, 
-	        React.createElement("table", {className: "questionContainer table table-hover"}, 
-	          React.createElement("tbody", null, 
-	            questions
+	      React.createElement("div", {id: "page-content-wrapper"}, 
+	        React.createElement("div", {className: "container-fluid"}, 
+	          React.createElement("h2", null, "Regex Puzzles"), 
+	          React.createElement("table", {className: "questionContainer table table-hover"}, 
+	            React.createElement("tbody", null, 
+	              questions
+	            )
 	          )
 	        )
 	      )
 	    );
+	    } else {
+	      return (React.createElement("div", null, "loading"));
+	    }
 	  }
 	});
 
@@ -23647,6 +23724,8 @@
 	    return {
 	      result: '',
 	      solved: false,
+	      hintNo: -1, 
+	      showHint: false
 	    };
 	  },
 
@@ -23668,6 +23747,25 @@
 	    }
 	  },
 
+	  displayHint: function(){ 
+	    var question = this.props.questions[this.props.params.qNumber - 1];
+	    var hNumber = this.state.hintNo
+	    var hint = question['hints'][hNumber] || question['hints'][question['hints'].length - 1]
+	    
+	    return (
+	     React.createElement("p", {key: hint, className: "displayedHint"}, hint)
+	    )
+
+	  },
+
+	  countHint: function(){ 
+	    var temp = this.state.hintNo
+	    this.setState({ 
+	      hintNo: temp+1, 
+	      showHint: true
+	    })
+	  },
+
 	  displayTestCases: function(string, condition) {
 	    var question = this.props.questions[this.props.params.qNumber - 1];
 	    return question[string].map(function(testCase) {
@@ -23677,6 +23775,7 @@
 	    }.bind(this));
 	  },
 
+	  //TODO: Impliment "next" button or automatically return to menu after question is solved
 	  returnToMenu: function() {
 	    this.setState({
 	      result: '',
@@ -23709,6 +23808,32 @@
 	    }
 	  },
 
+	  handleSubmit: function(e) {
+	    e.preventDefault();
+	    var solution = React.findDOMNode(this.refs.solutionText).value;
+	    var question = this.props.questions[this.props.params.qNumber - 1];
+	    var data = {
+	      "qNumber": question.qNumber,
+	      "points": question.points,
+	      "solution":  solution
+	    }
+
+	    React.findDOMNode(this.refs.solutionText).value = 'Solution Submitted';
+	    $.ajax({
+	        url: window.location.origin + '/submitSolution',
+	        contentType:"application/json",
+	        dataType: 'json',
+	        type: 'POST',
+	        data: JSON.stringify(data),
+	        success: function(data) {
+	          console.log("Success");
+	        }.bind(this),
+	        error: function(xhr, status, err) {
+	          console.error(this.props.url, status, err.toString());
+	        }.bind(this)
+	      });
+	  },
+
 	  render: function() {
 	    var question = this.props.questions[this.props.params.qNumber - 1];
 
@@ -23724,43 +23849,52 @@
 	    }
 
 	    return (
-	      React.createElement("div", {className: "question-solve"}, 
-	        React.createElement("div", {className: "row"}, 
-	          React.createElement("div", {className: "col-sm-10"}, 
-	            React.createElement("h2", null, question.title), 
-	            React.createElement("p", null, question.description), 
-	            React.createElement(Timer, {stop: this.state.solved})
-	          ), 
+	      React.createElement("div", {id: "page-content-wrapper"}, 
+	        React.createElement("div", {className: "container-fluid"}, 
+	          React.createElement("div", {className: "row"}, 
+	            React.createElement("div", {className: "col-lg-12"}, 
+	              React.createElement("h2", null, question.title, React.createElement("span", {className: "points"}, "Points:", question.points)), 
+	              React.createElement("p", null, question.description), 
+	              React.createElement(Timer, {stop: this.state.solved})
+	            ), 
 
-	          React.createElement("div", {className: "col-sm-2"}, 
-	            React.createElement(Link, {to: "default", className: "btn btn-primary back"}, "Back")
+	            React.createElement("div", {className: "col-sm-2"}, 
+	              React.createElement(Link, {to: "overview", className: "btn btn-primary back"}, "Back")
+	            ), 
+
+	            React.createElement("form", {className: "form-inline text-center", onSubmit: this.handleSubmit}, 
+	              React.createElement("span", {className: "solution"}, "/", React.createElement("textarea", {ref: "solutionText", onChange: this.setRegex, rows: "1", cols: "50", type: "text", className: "regex form-control", placeholder: "Regex solution..."}), "/"), 
+	                this.state.solved ? React.createElement("p", null, React.createElement("button", {className: "btn btn-success"}, 'Submit Solution')) : null, 
+	                this.state.solved === null ? React.createElement("p", {className: "error-msg"}, "Please provide valid regular expression") : null, 
+	                this.state.solved ? React.createElement("h3", {className: "success"}, "Success!!! Solved All Test Cases!") : null
+	            ), 
+
+	            React.createElement("div", {className: "text-center"}, 
+	              React.createElement("div", {className: "btn btn-primary hints", onClick: this.countHint}, "Hint"), 
+	              React.createElement("p", null), 
+	              this.state.showHint ? this.displayHint() : null
+	            ), 
+
+	            React.createElement("div", {className: "test-cases"}, 
+
+	              React.createElement("p", {className: "instruction"}, 'Make all words turn green to complete the challenge'), 
+	              React.createElement("div", {className: "col-sm-6 text-center"}, 
+	                React.createElement("h3", null, 'Should match'), 
+	                this.displayTestCases('truthy', true)
+	              ), 
+	              React.createElement("div", {className: "col-sm-6 text-center"}, 
+	                React.createElement("h3", null, 'Should not match'), 
+	                this.displayTestCases('falsy', false)
+	              )
+	            )
 	          )
-	        ), 
-
-	        React.createElement("form", {className: "form-inline text-center"}, 
-	          React.createElement("span", {className: "solution"}, "/", React.createElement("textarea", {ref: "solutionText", onChange: this.setRegex, rows: "1", cols: "50", type: "text", className: "regex form-control", placeholder: "Regex solution..."}), "/"), 
-
-	          this.state.solved === null ? React.createElement("p", {className: "error-msg"}, "Please provide valid regular expression") : null, 
-	          this.state.solved ? React.createElement("h3", {className: "success"}, "Success!!! Solved All Test Cases!") : null
-	        ), 
-
-	        React.createElement("div", {className: "test-cases"}, 
-
-	          React.createElement("p", {className: "instruction"}, 'Make all words turn green to complete the challenge'), 
-	          React.createElement("div", {className: "col-sm-6 text-center"}, 
-	            React.createElement("h3", null, 'Should match'), 
-	            this.displayTestCases('truthy', true)
-	          ), 
-	          React.createElement("div", {className: "col-sm-6 text-center"}, 
-	            React.createElement("h3", null, 'Should not match'), 
-	            this.displayTestCases('falsy', false)
-	          )
-
 	        )
 	      )
 	    )
 	  }
 	});
+
+	// timer component for keeping track of how long a user spends on a question
 
 	var Timer = React.createClass({displayName: "Timer",
 	  getInitialState: function() {
@@ -23793,7 +23927,6 @@
 	      seconds = '0'+ seconds;
 	    }
 
-
 	    return (
 	      React.createElement("div", null, "Time Elapsed: ", minutes, ":", seconds)
 	    );
@@ -23801,6 +23934,269 @@
 	});
 
 	module.exports = DetailView;
+
+
+/***/ },
+/* 198 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+
+	var Router = __webpack_require__(158);
+	var Navigation = Router.Navigation;
+
+
+	var Link = Router.Link;
+
+	var SignInView = React.createClass({displayName: "SignInView",
+		mixins: [Navigation],
+
+		/* function: signin 
+		 * ----------------
+		 * This function is invoked when the user presses enter of clicks the signin
+		 * button. It takes the username and password from the text boxes and sends
+		 * them via ajax request to the server
+		*/
+
+		getInitialState: function(){
+	    return {
+	      login: true
+	    };
+	  },
+
+		signin: function(){
+			var username = React.findDOMNode(this.refs.username).value;
+			var password = React.findDOMNode(this.refs.password).value;
+			var data = [username, password];
+			var that = this;
+
+			$.ajax({
+				url:window.location.origin + '/signin',
+				method: 'POST',
+				data: JSON.stringify(data),
+				contentType:"application/json",
+				dataType: 'json',
+				success: function(data){
+					that.transitionTo('overview');
+				},
+				error: function(xhr, status, err){
+				  console.error(xhr, status, err.message);
+				  that.setState({
+				    login: false 
+				  });
+				}
+			});
+		},
+
+		render: function(){
+			return (
+				React.createElement("div", {id: "page-content-wrapper"}, 
+	        React.createElement("div", {className: "container-fluid"}, 
+						React.createElement("h2", null, "Sign In"), 
+						React.createElement("form", {className: "form-inline"}, 
+							React.createElement("div", {className: "form-group"}, 
+								React.createElement("label", null, "Username"), 
+		  	  			React.createElement("input", {ref: "username", type: "username", className: "form-control", placeholder: "Username"})
+		    			), 
+		    			React.createElement("div", {className: "form-group"}, 
+								React.createElement("label", null, "Password "), 
+		    				React.createElement("input", {ref: "password", type: "password", className: "form-control", placeholder: "Password"})
+		    			), 
+							React.createElement("button", {onClick: this.signin, className: "btn btn-primary"}, "Submit")
+						), 
+						React.createElement(Link, {to: "signup", className: "btn btn-primary"}, "Signup"), 
+						this.state.login === false ? React.createElement("p", {className: "error-msg"}, "Login incorrect, please try again") : null
+					)
+				)
+			)
+		}
+	});	
+
+	module.exports= SignInView;
+
+/***/ },
+/* 199 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+
+	var Router = __webpack_require__(158);
+	var Navigation = Router.Navigation;
+
+
+	var Link = Router.Link;
+
+	var SignUpView = React.createClass({displayName: "SignUpView",
+		mixins: [Navigation],
+
+		getInitialState: function(){
+	    return {
+	      login: true
+	    };
+	  },
+
+		signup: function(){
+			var username = React.findDOMNode(this.refs.username).value;
+			var password = React.findDOMNode(this.refs.password).value;
+			var data = [username, password];
+			var that = this;
+
+			$.ajax({
+				url:window.location.origin + '/signup',
+				method: 'POST',
+				data: JSON.stringify(data),
+				contentType:"application/json",
+				dataType: 'json',
+				success: function(data){
+						console.log('SUCCESS!');
+						console.log(data);
+						that.transitionTo('overview');
+				},
+				error: function(xhr, status, err){
+				  console.error(xhr, status, err.message);
+				  that.setState({
+				    login: false 
+				  });
+				}
+			});
+
+		},
+
+		render: function(){
+			return (
+				React.createElement("div", null, 
+					React.createElement("h2", null, "Sign Up"), 
+					React.createElement("p", null, "Please create a new account or continue to Login"), 
+					React.createElement("div", null, React.createElement(Link, {to: "signin", className: "btn btn-primary"}, "Signin")), 
+						React.createElement("form", {className: "form-inline"}, 
+							React.createElement("div", {className: "form-group"}, 
+								React.createElement("label", null, "Username"), 
+		  	  			React.createElement("input", {ref: "username", type: "username", className: "form-control", placeholder: "Username"})
+		    			), 
+		    			React.createElement("div", {className: "form-group"}, 
+								React.createElement("label", null, "Password"), 
+		    				React.createElement("input", {ref: "password", type: "password", className: "form-control", placeholder: "Password"})
+		    			), 
+							React.createElement("button", {onClick: this.signup, className: "btn btn-primary"}, "Submit")
+						), 
+						this.state.login === false ? React.createElement("p", {className: "error-msg"}, "Username is taken, please try again") : null
+				)
+			)
+		}
+	});
+
+	module.exports= SignUpView;
+
+/***/ },
+/* 200 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1); 
+
+	var Router = __webpack_require__(158);
+
+	var TutorialView = React.createClass({displayName: "TutorialView", 
+	  render: function(){ 
+	    return (
+	      React.createElement("div", null, "Hello")
+
+
+	      )
+	  }
+	});
+
+	module.exports = TutorialView;
+
+/***/ },
+/* 201 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var Router = __webpack_require__(158);
+	var Navigation = Router.Navigation;
+	var Link = Router.Link;
+
+	var SolutionView = React.createClass({displayName: "SolutionView",
+	  mixins: [Navigation],
+
+	  getInitialState: function(){
+	    return {data:null}
+	  },
+
+	  componentDidMount: function() {
+	    var question = this.props.questions[this.props.params.qNumber - 1];
+	    var data = {
+	      "qNumber": question.qNumber,
+	    }
+	    $.ajax({
+	        url: window.location.origin + '/getSolutions',
+	        contentType:"application/json",
+	        dataType: 'json',
+	        type: 'POST',
+	        data: JSON.stringify(data),
+	        success: function(data) {
+	          this.setState({data: data});
+	        }.bind(this),
+	        error: function(xhr, status, err) {
+	          console.error(this.props.url, status, err.toString());
+	        }.bind(this)
+	      });
+	  },
+
+
+	  returnToMenu: function() {
+	    this.props.goToQuestionMenu();
+	  },
+
+	  render: function() {
+	    var question = this.props.questions[this.props.params.qNumber - 1];
+	    // var solutions = this.state.data.map(function(solution) {
+	    //   return (
+	    //     <tr>
+	    //       <td><p>{solution.user}</p></td>
+	    //       <td><p>{solution.solution}</p></td>
+	    //       <td><p>Points:{solution.votes}</p></td>
+	    //     </tr>
+	    //   )
+	    // });
+	    if (this.state.data) {
+	      var solution = '';
+	      for(var i = 0 ; i < this.state.data.questionSolved.length;i++) {
+	        if (this.state.data.questionSolved[i].qNumber === question.qNumber) {
+	          solution = this.state.data.questionSolved[i].solution;
+	        }
+	      } 
+	      return (
+	        React.createElement("div", {className: "question-solve"}, 
+	          React.createElement("div", {className: "row"}, 
+
+	            React.createElement("div", {className: "col-sm-10"}, 
+	              React.createElement("h2", null, question.title, " ", React.createElement("span", {className: "points"}, "Points: ", question.points)), 
+	              React.createElement("p", null, question.description)
+	            ), 
+	            React.createElement("div", {className: "col-sm-2"}, 
+	              React.createElement(Link, {to: "default", className: "btn btn-primary back"}, "Back")
+	            ), 
+
+	            React.createElement("div", {className: "col-sm-12"}, 
+	              React.createElement("h4", null, "Your Solution:"), 
+	              React.createElement("p", null, solution), 
+	              React.createElement("h4", null, "Other solutions:"), 
+	              React.createElement("table", {className: "questionContainer table table-hover"}, 
+	                React.createElement("tbody", null
+	                )
+	              )
+	            )
+	          )
+	        )
+	      )
+	    } else {
+	      return (React.createElement("div", null, "loading"))
+	    }
+	  }
+	});
+
+	module.exports = SolutionView;
 
 
 /***/ }

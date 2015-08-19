@@ -2,14 +2,22 @@ var React = require('react');
 
 var OverView = require('./views/OverView.jsx');
 var DetailView = require('./views/DetailView.jsx');
+var SignInView = require('./views/SignInView.jsx');
+var SignUpView = require('./views/SignUpView.jsx');
+var TutorialView = require('./views/RegexTutorialView.jsx');
+var SolutionView = require('./views/SolutionView.jsx')
 
 var Router = require('react-router');
 var RouteHandler = Router.RouteHandler;
 var DefaultRoute = Router.DefaultRoute;
 var Route = Router.Route;
+var Link = Router.Link;
+var Navigation = Router.Navigation;
 
 
 var App = React.createClass({
+  mixins: [Navigation],
+
   getInitialState: function(){
     return {
       questions: []
@@ -39,8 +47,34 @@ var App = React.createClass({
 
   render: function() {
     return (
-      <div className="container">
-        <h2 className="title">Regex Game</h2>
+      <div id='wrapper'>
+
+        <div id='sidebar-wrapper'>
+          <ul className='sidebar-nav'>
+            <li className='sidebar-brand'>
+              <Link to='default'>Regexr</Link>
+            </li>
+            <li>
+              <Link to='default'>Questions</Link>
+            </li>
+            <li>
+              <Link to='default'>Profile</Link>
+            </li>
+            <li>
+              <Link to='default'>Leaderboard</Link>
+            </li>
+            <li>
+              <Link to='default'>Solutions</Link>
+            </li>
+            <li>
+              <Link to='tutorial'>Regex Cheatsheet</Link>
+            </li>
+            <li>
+              <Link to='signin'>Signin</Link>
+            </li>
+          </ul>
+      
+        </div>
         <RouteHandler questions={this.state.questions}/>
       </div>
     )
@@ -50,7 +84,12 @@ var App = React.createClass({
 
 var routes = (
   <Route name="app" path="/" handler={App}>
-    <Route name="question" path="/:qNumber" handler={DetailView} />
+    <Route name="tutorial" path="/tutorial" handler={TutorialView}/>
+    <Route name="question" path="/question/:qNumber" handler={DetailView}/>
+    <Route name="solution" path="/solution/:qNumber" handler={SolutionView}/>
+    <Route name="signin" path= "/signin" handler={SignInView}/>
+    <Route name="signup" path= "/signup" handler={SignUpView}/>
+    <Route name="overview" path= "/profile" handler={OverView}/>
     <DefaultRoute name="default" handler={OverView} />
   </Route>
 );
