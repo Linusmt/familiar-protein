@@ -25,7 +25,7 @@ var SignUpView = React.createClass({
 			url:window.location.origin + '/signup',
 			method: 'POST',
 			data: JSON.stringify(data),
-			contentType:"application/json",
+			contentType: "application/json",
 			dataType: 'json',
 			success: function(data){
 					console.log('SUCCESS!');
@@ -33,6 +33,7 @@ var SignUpView = React.createClass({
 					that.transitionTo('overview');
 			},
 			error: function(xhr, status, err){
+				alert( xhr.responseText);
 			  console.error(xhr, status, err.message);
 			  that.setState({
 			    login: false 
