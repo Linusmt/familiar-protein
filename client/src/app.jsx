@@ -4,6 +4,7 @@ var OverView = require('./views/OverView.jsx');
 var DetailView = require('./views/DetailView.jsx');
 var SignInView = require('./views/SignInView.jsx');
 var SignUpView = require('./views/SignUpView.jsx');
+var TutorialView = require('./views/RegexTutorialView.jsx');
 
 var Router = require('react-router');
 var RouteHandler = Router.RouteHandler;
@@ -11,8 +12,6 @@ var DefaultRoute = Router.DefaultRoute;
 var Route = Router.Route;
 var Link = Router.Link;
 var Navigation = Router.Navigation;
-
-
 
 
 var App = React.createClass({
@@ -66,7 +65,14 @@ var App = React.createClass({
             <li>
               <Link to='default'>Solutions</Link>
             </li>
+            <li>
+              <Link to='tutorial'>Regex Cheatsheet</Link>
+            </li>
+            <li>
+              <Link to='signin'>Signin</Link>
+            </li>
           </ul>
+      
         </div>
         <RouteHandler questions={this.state.questions}/>
       </div>
@@ -77,6 +83,7 @@ var App = React.createClass({
 
 var routes = (
   <Route name="app" path="/" handler={App}>
+    <Route name="tutorial" path="/tutorial" handler={TutorialView}/>
     <Route name="question" path="/question/:qNumber" handler={DetailView}/>
     <Route name="signin" path= "/signin" handler = {SignInView}/>
     <Route name="signup" path= "/signup" handler = {SignUpView}/>
