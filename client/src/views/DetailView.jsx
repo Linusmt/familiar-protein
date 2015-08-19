@@ -96,15 +96,20 @@ var DetailView = React.createClass({
     }
   },
 
+  onTimeChange: function(newTime) {
+          this.setState({ time: newTime });
+      },
   handleSubmit: function(e) {
     e.preventDefault();
     $(React.findDOMNode(this.refs.submitButton)).prop('disabled', true)
     var solution = React.findDOMNode(this.refs.solutionText).value;
     var question = this.props.questions[this.props.params.qNumber - 1];
+    console.log(this.state.time);
     var data = {
       "qNumber": question.qNumber,
       "points": question.points,
-      "solution":  solution
+      "solution":  solution,
+      "time": this.state.time
     }
 
     React.findDOMNode(this.refs.solutionText).value = 'Solution Submitted';
@@ -115,7 +120,6 @@ var DetailView = React.createClass({
         type: 'POST',
         data: JSON.stringify(data),
         success: function(data) {
-          console.log("Success");
         }.bind(this),
         error: function(xhr, status, err) {
           console.error(this.props.url, status, err.toString());
@@ -144,7 +148,7 @@ var DetailView = React.createClass({
             <div className="col-lg-12">            
               <h2>{question.title}<span className="points">Points:{question.points}</span></h2>
               <p>{question.description}</p>
-              <Timer stop={this.state.solved} />
+              <Timer stop={this.state.solved} callbackParent={this.onTimeChange}/>
             </div>
 
             <div className="col-sm-2">
@@ -194,6 +198,7 @@ var Timer = React.createClass({
       clearInterval(this.interval);  
     } else {
       this.setState({secondsElapsed: this.state.secondsElapsed + 1});
+      this.props.callbackParent(this.state.secondsElapsed); // notify detailView that there is a change in time
     }
   },
   componentDidMount: function() {

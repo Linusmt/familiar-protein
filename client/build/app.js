@@ -49,10 +49,10 @@
 	var OverView = __webpack_require__(157);
 	var DetailView = __webpack_require__(197);
 	var SignInView = __webpack_require__(198);
-	var SignUpView = __webpack_require__(199);
-	var TutorialView = __webpack_require__(200);
-	var SolutionView = __webpack_require__(201)
-	var LeaderBoardView = __webpack_require__(202);
+	var SignUpView = __webpack_require__(201);
+	var TutorialView = __webpack_require__(202);
+	var SolutionView = __webpack_require__(203);
+	var LeaderBoardView = __webpack_require__(204);
 
 	var Router = __webpack_require__(158);
 	var RouteHandler = Router.RouteHandler;
@@ -61,14 +61,31 @@
 	var Link = Router.Link;
 	var Navigation = Router.Navigation;
 
+	var cookie = __webpack_require__(199);
 
 	var App = React.createClass({displayName: "App",
 	  mixins: [Navigation],
 
 	  getInitialState: function(){
 	    return {
-	      questions: []
+	      questions: [],
+	      username: cookie.load('username'),
+	      loggedIn: true
 	    };
+	  },
+
+	  onLogIn: function(status) {
+	    console.log(status);
+	    this.setState({
+	      loggedIn: status
+	    });
+	  },
+
+	  onLogout: function() {
+	    cookie.remove('username');
+	    this.setState({
+	      loggedIn: cookie.load('username')
+	    });
 	  },
 
 	  loadAllQuestions: function(){
@@ -93,16 +110,17 @@
 	  },
 
 	  render: function() {
+
 	    return (
 	      React.createElement("div", {id: "wrapper"}, 
-
 	        React.createElement("div", {id: "sidebar-wrapper"}, 
 	          React.createElement("ul", {className: "sidebar-nav"}, 
 	            React.createElement("li", {className: "sidebar-brand"}, 
 	              React.createElement(Link, {to: "default"}, "Regex Game")
 	            ), 
+	            React.createElement("li", null, "Signed in as: ", this.state.username, "  "), 
 	            React.createElement("li", null, 
-	              React.createElement(Link, {to: "default"}, "Questions")
+	              React.createElement(Link, {to: "overview"}, "Questions")
 	            ), 
 	            React.createElement("li", null, 
 	              React.createElement(Link, {to: "default"}, "Profile")
@@ -117,12 +135,15 @@
 	              React.createElement(Link, {to: "tutorial"}, "Regex Cheatsheet")
 	            ), 
 	            React.createElement("li", null, 
-	              React.createElement(Link, {to: "signin"}, "Signin")
+	              !this.state.loggedIn ? React.createElement(Link, {to: "signin"}, "Signin") : null
+	            ), 
+	            React.createElement("li", null, 
+	              this.state.loggedIn ? React.createElement(Link, {onClick: this.onLogout, to: "signin"}, "Logout") : null
 	            )
 	          )
 	      
 	        ), 
-	        React.createElement(RouteHandler, {questions: this.state.questions})
+	        React.createElement(RouteHandler, {questions: this.state.questions, logStatus: this.onLogIn})
 	      )
 	    )
 	  }
@@ -137,7 +158,8 @@
 	    React.createElement(Route, {name: "overview", path: "/profile", handler: OverView}), 
 	    React.createElement(Route, {name: "signin", path: "/signin", handler: SignInView}), 
 	    React.createElement(Route, {name: "signup", path: "/signup", handler: SignUpView}), 
-	    React.createElement(Route, {name: "leaderboard", path: "leaderboard", handler: LeaderBoardView}), "    ", React.createElement(DefaultRoute, {name: "default", handler: OverView})
+	    React.createElement(Route, {name: "leaderboard", path: "leaderboard", handler: LeaderBoardView}), 
+	    React.createElement(DefaultRoute, {name: "default", handler: SignInView})
 	  )
 	);
 
@@ -23809,15 +23831,20 @@
 	    }
 	  },
 
+	  onTimeChange: function(newTime) {
+	          this.setState({ time: newTime });
+	      },
 	  handleSubmit: function(e) {
 	    e.preventDefault();
 	    $(React.findDOMNode(this.refs.submitButton)).prop('disabled', true)
 	    var solution = React.findDOMNode(this.refs.solutionText).value;
 	    var question = this.props.questions[this.props.params.qNumber - 1];
+	    console.log(this.state.time);
 	    var data = {
 	      "qNumber": question.qNumber,
 	      "points": question.points,
-	      "solution":  solution
+	      "solution":  solution,
+	      "time": this.state.time
 	    }
 
 	    React.findDOMNode(this.refs.solutionText).value = 'Solution Submitted';
@@ -23828,7 +23855,6 @@
 	        type: 'POST',
 	        data: JSON.stringify(data),
 	        success: function(data) {
-	          console.log("Success");
 	        }.bind(this),
 	        error: function(xhr, status, err) {
 	          console.error(this.props.url, status, err.toString());
@@ -23857,7 +23883,7 @@
 	            React.createElement("div", {className: "col-lg-12"}, 
 	              React.createElement("h2", null, question.title, React.createElement("span", {className: "points"}, "Points:", question.points)), 
 	              React.createElement("p", null, question.description), 
-	              React.createElement(Timer, {stop: this.state.solved})
+	              React.createElement(Timer, {stop: this.state.solved, callbackParent: this.onTimeChange})
 	            ), 
 
 	            React.createElement("div", {className: "col-sm-2"}, 
@@ -23907,6 +23933,7 @@
 	      clearInterval(this.interval);  
 	    } else {
 	      this.setState({secondsElapsed: this.state.secondsElapsed + 1});
+	      this.props.callbackParent(this.state.secondsElapsed); // notify detailView that there is a change in time
 	    }
 	  },
 	  componentDidMount: function() {
@@ -23947,8 +23974,9 @@
 	var Router = __webpack_require__(158);
 	var Navigation = Router.Navigation;
 
-
 	var Link = Router.Link;
+
+	var cookie = __webpack_require__(199);
 
 	var SignInView = React.createClass({displayName: "SignInView",
 		mixins: [Navigation],
@@ -23962,7 +23990,8 @@
 
 		getInitialState: function(){
 	    return {
-	      login: true
+	      login: true,
+	      username: ''
 	    };
 	  },
 
@@ -23979,12 +24008,16 @@
 				contentType:"application/json",
 				dataType: 'json',
 				success: function(data){
+					that.setState({
+				    username: data 
+				  });
+				 	that.props.logStatus(true);
 					that.transitionTo('overview');
 				},
 				error: function(xhr, status, err){
 				  console.error(xhr, status, err.message);
 				  that.setState({
-				    login: false 
+				    login: false
 				  });
 				}
 			});
@@ -24030,6 +24063,215 @@
 /* 199 */
 /***/ function(module, exports, __webpack_require__) {
 
+	var cookie = __webpack_require__(200);
+
+	var _rawCookies = {};
+	var _cookies = {};
+
+	if (typeof document !== 'undefined') {
+	  setRawCookie(document.cookie);
+	}
+
+	function load(name, doNotParse) {
+	  if (doNotParse) {
+	    return _rawCookies[name];
+	  }
+
+	  return _cookies[name];
+	}
+
+	function save(name, val, opt) {
+	  _cookies[name] = val;
+	  _rawCookies[name] = val;
+
+	  // allow you to work with cookies as objects.
+	  if (typeof val === 'object') {
+	    _rawCookies[name] = JSON.stringify(val);
+	  }
+
+	  // Cookies only work in the browser
+	  if (typeof document !== 'undefined') {
+	    document.cookie = cookie.serialize(name, _rawCookies[name], opt);
+	  }
+	}
+
+	function remove(name, path) {
+	  delete _rawCookies[name];
+	  delete _cookies[name];
+
+	  if (typeof document !== 'undefined') {
+	    var removeCookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+
+	    if (path) {
+	      removeCookie += ' path=' + path;
+	    }
+
+	    document.cookie = removeCookie;
+	  }
+	}
+
+	function setRawCookie(rawCookie) {
+	  _rawCookies = {};
+	  _cookies = {};
+
+	  if (!rawCookie) {
+	    return;
+	  }
+
+	  var rawCookies = cookie.parse(rawCookie);
+
+	  for (var key in rawCookies) {
+	    _rawCookies[key] = rawCookies[key];
+
+	    try {
+	      _cookies[key] = JSON.parse(rawCookies[key]);
+	    } catch(e) {
+	      // Not serialized object
+	      _cookies[key] = rawCookies[key];
+	    }
+	  }
+	}
+
+	var reactCookie = {
+	  load: load,
+	  save: save,
+	  remove: remove,
+	  setRawCookie: setRawCookie
+	};
+
+	if (typeof window !== 'undefined') {
+	  window['reactCookie'] = reactCookie;
+	}
+
+	module.exports = reactCookie;
+
+
+/***/ },
+/* 200 */
+/***/ function(module, exports) {
+
+	/*!
+	 * cookie
+	 * Copyright(c) 2012-2014 Roman Shtylman
+	 * MIT Licensed
+	 */
+
+	/**
+	 * Module exports.
+	 * @public
+	 */
+
+	exports.parse = parse;
+	exports.serialize = serialize;
+
+	/**
+	 * Module variables.
+	 * @private
+	 */
+
+	var decode = decodeURIComponent;
+	var encode = encodeURIComponent;
+
+	/**
+	 * Parse a cookie header.
+	 *
+	 * Parse the given cookie header string into an object
+	 * The object has the various cookies as keys(names) => values
+	 *
+	 * @param {string} str
+	 * @param {object} [options]
+	 * @return {string}
+	 * @public
+	 */
+
+	function parse(str, options) {
+	  var obj = {}
+	  var opt = options || {};
+	  var pairs = str.split(/; */);
+	  var dec = opt.decode || decode;
+
+	  pairs.forEach(function(pair) {
+	    var eq_idx = pair.indexOf('=')
+
+	    // skip things that don't look like key=value
+	    if (eq_idx < 0) {
+	      return;
+	    }
+
+	    var key = pair.substr(0, eq_idx).trim()
+	    var val = pair.substr(++eq_idx, pair.length).trim();
+
+	    // quoted values
+	    if ('"' == val[0]) {
+	      val = val.slice(1, -1);
+	    }
+
+	    // only assign once
+	    if (undefined == obj[key]) {
+	      obj[key] = tryDecode(val, dec);
+	    }
+	  });
+
+	  return obj;
+	}
+
+	/**
+	 * Serialize data into a cookie header.
+	 *
+	 * Serialize the a name value pair into a cookie string suitable for
+	 * http headers. An optional options object specified cookie parameters.
+	 *
+	 * serialize('foo', 'bar', { httpOnly: true })
+	 *   => "foo=bar; httpOnly"
+	 *
+	 * @param {string} name
+	 * @param {string} val
+	 * @param {object} [options]
+	 * @return {string}
+	 * @public
+	 */
+
+	function serialize(name, val, options) {
+	  var opt = options || {};
+	  var enc = opt.encode || encode;
+	  var pairs = [name + '=' + enc(val)];
+
+	  if (null != opt.maxAge) {
+	    var maxAge = opt.maxAge - 0;
+	    if (isNaN(maxAge)) throw new Error('maxAge should be a Number');
+	    pairs.push('Max-Age=' + maxAge);
+	  }
+
+	  if (opt.domain) pairs.push('Domain=' + opt.domain);
+	  if (opt.path) pairs.push('Path=' + opt.path);
+	  if (opt.expires) pairs.push('Expires=' + opt.expires.toUTCString());
+	  if (opt.httpOnly) pairs.push('HttpOnly');
+	  if (opt.secure) pairs.push('Secure');
+
+	  return pairs.join('; ');
+	}
+
+	/**
+	 * Try decoding a string using a decoding function.
+	 *
+	 * @param {string} str
+	 * @param {function} decode
+	 * @private
+	 */
+
+	function tryDecode(str, decode) {
+	  try {
+	    return decode(str);
+	  } catch (e) {
+	    return str;
+	  }
+	}
+
+
+/***/ },
+/* 201 */
+/***/ function(module, exports, __webpack_require__) {
+
 	var React = __webpack_require__(1);
 
 	var Router = __webpack_require__(158);
@@ -24060,9 +24302,7 @@
 				contentType: "application/json",
 				dataType: 'json',
 				success: function(data){
-						console.log('SUCCESS!');
-						console.log(data);
-						that.transitionTo('overview');
+					that.transitionTo('overview');
 				},
 				error: function(xhr, status, err){
 					alert( xhr.responseText);
@@ -24112,7 +24352,7 @@
 	module.exports= SignUpView;
 
 /***/ },
-/* 200 */
+/* 202 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1); 
@@ -24168,7 +24408,7 @@
 	module.exports = TutorialView;
 
 /***/ },
-/* 201 */
+/* 203 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -24274,11 +24514,14 @@
 	        )
 	      }, this);
 	      var solution = '';
+	      var time = 0;
 	      for(var i = 0 ; i < this.state.userData.questionSolved.length;i++) {
 	        if (this.state.userData.questionSolved[i].qNumber === question.qNumber) {
 	          solution = this.state.userData.questionSolved[i].solution;
+	          time = this.state.userData.questionSolved[i].time;
 	        }
-	      } 
+	      }
+
 	      return (
 	        React.createElement("div", {className: "question-solve"}, 
 	          React.createElement("div", {className: "row"}, 
@@ -24287,12 +24530,13 @@
 	              React.createElement("p", null, question.description)
 	            ), 
 	            React.createElement("div", {className: "col-sm-2"}, 
-	              React.createElement(Link, {to: "default", className: "btn btn-primary back"}, "Back")
+	              React.createElement(Link, {to: "overview", className: "btn btn-primary back"}, "Back")
 	            ), 
 
 	            React.createElement("div", {className: "col-sm-12"}, 
 	              React.createElement("h4", null, "Your Solution:"), 
 	              React.createElement("p", null, solution), 
+	              React.createElement("p", null, "Time taken: ", React.createElement("span", {className: "time"}, time)), 
 	              React.createElement("h4", null, "Other solutions:"), 
 	              React.createElement("table", {className: "questionContainer table table-hover"}, 
 	                React.createElement("tbody", null, 
@@ -24313,7 +24557,7 @@
 
 
 /***/ },
-/* 202 */
+/* 204 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -24347,18 +24591,17 @@
 			});
 		},
 
-
-
 		render: function(){
 
 
 			//Scores should be returned as an array with each element being an object
 			//The object should hold the username and the score
 			var scores = this.state.scores.map(function(score){
+				console.log(score);
 				return (
 					React.createElement("tr", {key: score.username, className: "question"}, 
 						React.createElement("td", null, React.createElement("b", null, score.username)), 
-						React.createElement("td", null, React.createElement("b", null, score.totalScore))
+						React.createElement("td", null, React.createElement("b", null, score.points))
 					)
 				)
 			});

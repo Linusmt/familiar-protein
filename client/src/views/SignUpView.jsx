@@ -28,9 +28,7 @@ var SignUpView = React.createClass({
 			contentType: "application/json",
 			dataType: 'json',
 			success: function(data){
-					console.log('SUCCESS!');
-					console.log(data);
-					that.transitionTo('overview');
+				that.transitionTo('overview');
 			},
 			error: function(xhr, status, err){
 				alert( xhr.responseText);

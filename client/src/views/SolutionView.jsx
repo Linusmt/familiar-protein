@@ -101,11 +101,14 @@ var SolutionView = React.createClass({
         )
       }, this);
       var solution = '';
+      var time = 0;
       for(var i = 0 ; i < this.state.userData.questionSolved.length;i++) {
         if (this.state.userData.questionSolved[i].qNumber === question.qNumber) {
           solution = this.state.userData.questionSolved[i].solution;
+          time = this.state.userData.questionSolved[i].time;
         }
-      } 
+      }
+
       return (
         <div className="question-solve">
           <div className="row">
@@ -114,12 +117,13 @@ var SolutionView = React.createClass({
               <p>{question.description}</p>
             </div>
             <div className="col-sm-2">
-              <Link to="default" className="btn btn-primary back">Back</Link>
+              <Link to="overview" className="btn btn-primary back">Back</Link>
             </div>
 
             <div className="col-sm-12">
               <h4>Your Solution:</h4>
               <p>{solution}</p>
+              <p>Time taken: <span className="time">{time}</span></p>
               <h4>Other solutions:</h4>
               <table className="questionContainer table table-hover">
                 <tbody>
