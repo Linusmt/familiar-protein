@@ -1,6 +1,7 @@
 var bcrypt = require('bcrypt-nodejs');
 var User = require('./userModel');
 
+
 /* function: signup
  * ----------------
  * This function allows for users to be verified for sign in. It 
@@ -12,7 +13,7 @@ var signin = function(req, res) {
   User.findOne({
     username: req.body[0]
   }, function(err, data) {
-    if (!data) {
+    if (err) {
       res.send(418, err);
     } else {
       if (bcrypt.compareSync(req.body[1], data.password)) {
@@ -83,29 +84,44 @@ var submitSolution = function(req, res) {
 };
 
 var getUserData = function(req, res) {
-	var username = req.cookies.username
+  var username = req.cookies.username;
   if (username === undefined) {
-    res.status(200).send(JSON.stringify({username:"Anonymous", questionSolved:[]}));
+    res.status(200).send(JSON.stringify({
+      username: "Anonymous",
+      questionSolved: []
+    }));
   } else {
-  	User.findOne({username:username}, function(err, data){
-  		if(err){
-  		 res.status(404).send();
-  		} else {
-  			res.status(200).send(data)
-  		}
-  	})
+    User.findOne({
+      username: username
+    }, function(err, data) {
+      if (err) {
+        res.status(404).send();
+      } else {
+        res.status(200).send(data);
+      }
+    });
   }
 };
 
 var getSolutions = function(req, res) {
-	var qNumber = req.body.qNumber;
-  User.aggregate([{$unwind:"$questionSolved"},{$match:{"questionSolved.qNumber":qNumber}},{$sort:{"questionSolved.votes":-1}}]).limit(10).exec(function(err, result){
+  var qNumber = req.body.qNumber;
+  User.aggregate([{
+    $unwind: "$questionSolved"
+  }, {
+    $match: {
+      "questionSolved.qNumber": qNumber
+    }
+  }, {
+    $sort: {
+      "questionSolved.votes": -1
+    }
+  }]).limit(10).exec(function(err, result) {
     if (err) {
       res.send(404).send();
     } else {
       res.status(200).send(result);
     }
-  })
+  });
 };
 
 var upVote = function(req, res) {
@@ -127,6 +143,7 @@ var upVote = function(req, res) {
       return res.json(model);
     });
 };
+
 
 var leaderboard = function(req, res) {
   User.find({}, function(err, data) {
