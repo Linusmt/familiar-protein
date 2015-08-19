@@ -23653,6 +23653,8 @@
 	    return {
 	      result: '',
 	      solved: false,
+	      hintNo: -1, 
+	      showHint: false
 	    };
 	  },
 
@@ -23674,6 +23676,26 @@
 	    }
 	  },
 
+	  displayHint: function(){ 
+	    var question = this.props.questions[this.props.params.qNumber - 1];
+	    var hNumber = this.state.hintNo
+	    var hint = question['hints'][hNumber] || question['hints'][question['hints'].length - 1]
+	    
+	    return (
+	     React.createElement("p", {key: hint, className: "displayedHint"}, hint)
+	    )
+	 
+
+	  },
+
+	  countHint: function(){ 
+	    var temp = this.state.hintNo
+	    this.setState({ 
+	      hintNo: temp+1, 
+	      showHint: true
+	    })
+	  },
+
 	  displayTestCases: function(string, condition) {
 	    var question = this.props.questions[this.props.params.qNumber - 1];
 	    return question[string].map(function(testCase) {
@@ -23683,6 +23705,7 @@
 	    }.bind(this));
 	  },
 
+	  //TODO: Impliment "next" button or automatically return to menu after question is solved
 	  returnToMenu: function() {
 	    this.setState({
 	      result: '',
@@ -23748,8 +23771,13 @@
 
 	          this.state.solved === null ? React.createElement("p", {className: "error-msg"}, "Please provide valid regular expression") : null, 
 	          this.state.solved ? React.createElement("h3", {className: "success"}, "Success!!! Solved All Test Cases!") : null
-	        ), 
 
+	        ), 
+	        React.createElement("div", {className: "text-center"}, 
+	          React.createElement("div", {className: "btn btn-primary hints", onClick: this.countHint}, "Hint"), 
+	          React.createElement("p", null), 
+	          this.state.showHint ? this.displayHint() : null
+	        ), 
 	        React.createElement("div", {className: "test-cases"}, 
 
 	          React.createElement("p", {className: "instruction"}, 'Make all words turn green to complete the challenge'), 
