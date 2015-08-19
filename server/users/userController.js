@@ -1,6 +1,7 @@
 var bcrypt = require('bcrypt-nodejs');
 var User = require('./userModel');
 
+
 /* function: signup
  * ----------------
  * This function allows for users to be verified for sign in. It 
@@ -12,7 +13,7 @@ var signin = function(req, res) {
   User.findOne({
     username: req.body[0]
   }, function(err, data) {
-    if (!data) {
+    if (err) {
       res.send(418, err);
     } else {
       if (bcrypt.compareSync(req.body[1], data.password)) {
@@ -51,8 +52,8 @@ var signup = function(req, res) {
       });
       user.save(function(err, result) {
         if (err) res.status(404).send();
-        res.cookie('username', result.username);
-        res.status(200).json(result.username);
+        res.cookie('username', data.username);
+        res.status(200).send(result.username);
       });
     }
   });
@@ -135,6 +136,7 @@ var upVote = function(req, res) {
     });
 };
 
+
 var leaderboard = function(req, res) {
   User.find({}, function(err, data) {
     if (err) res.status(404).send();
@@ -156,3 +158,4 @@ module.exports = {
   getUserData: getUserData,
   upVote: upVote
 };
+

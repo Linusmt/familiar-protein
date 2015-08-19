@@ -2,14 +2,17 @@ var mongoose = require('mongoose');
 var questions = require('./questionData');
 
 var QuestionSchema = new mongoose.Schema({
-  qNumber: {type: Number, unique: true},
+  qNumber: {
+    type: Number,
+    unique: true
+  },
   points: Number,
   title: String,
   description: String,
   truthy: [String],
-  falsy: [String], 
+  falsy: [String],
   hints: [String]
-  // examples?
+    // examples?
 });
 
 var Question = mongoose.model('Question', QuestionSchema);
@@ -28,4 +31,3 @@ questions.forEach(function(element) {
 
 
 module.exports = Question;
-
