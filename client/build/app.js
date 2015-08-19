@@ -137,7 +137,8 @@
 	    React.createElement(Route, {name: "overview", path: "/profile", handler: OverView}), 
 	    React.createElement(Route, {name: "signin", path: "/signin", handler: SignInView}), 
 	    React.createElement(Route, {name: "signup", path: "/signup", handler: SignUpView}), 
-	    React.createElement(Route, {name: "leaderboard", path: "leaderboard", handler: LeaderBoardView}), "    ", React.createElement(DefaultRoute, {name: "default", handler: OverView})
+	    React.createElement(Route, {name: "leaderboard", path: "leaderboard", handler: LeaderBoardView}), 
+	    React.createElement(DefaultRoute, {name: "default", handler: OverView})
 	  )
 	);
 

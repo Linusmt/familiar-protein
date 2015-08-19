@@ -91,7 +91,8 @@ var routes = (
     <Route name="overview" path= "/profile" handler={OverView}/>
     <Route name="signin" path= "/signin" handler = {SignInView}/>
     <Route name="signup" path= "/signup" handler = {SignUpView}/>
-    <Route name="leaderboard" path= "leaderboard" handler= {LeaderBoardView}/>    <DefaultRoute name="default" handler={OverView} />
+    <Route name="leaderboard" path= "leaderboard" handler= {LeaderBoardView}/>
+    <DefaultRoute name="default" handler={OverView} />
   </Route>
 );
 
