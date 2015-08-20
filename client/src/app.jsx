@@ -87,14 +87,7 @@ var App = React.createClass({
             <li>
               <Link to='tutorial'>Regex Cheatsheet</Link>
             </li>
-<<<<<<< HEAD
-            <li>
-              {this.state.loggedIn ? <Link onClick={this.onLogout} to='signin'>Logout</Link> : <Link to='signin'>Signin</Link> }
-            </li>
-=======
->>>>>>> preparing to merge
           </ul>
-      
         </div>
         <RouteHandler loggedIn={this.state.loggedIn} questions={this.state.questions} logStatus={this.onLogIn}/>
       </div>
