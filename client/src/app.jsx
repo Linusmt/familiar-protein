@@ -24,12 +24,7 @@ var App = React.createClass({
     return {
       questions: [],
       username: cookie.load('username'),
-<<<<<<< HEAD
       loggedIn: cookie.load('username')
-=======
-      loggedIn: true,
-      questions: [], 
->>>>>>> CaptainKevin-feat/solutionView2
     };
   },
 

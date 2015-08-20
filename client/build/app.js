@@ -70,12 +70,7 @@
 	    return {
 	      questions: [],
 	      username: cookie.load('username'),
-<<<<<<< HEAD
 	      loggedIn: cookie.load('username')
-=======
-	      loggedIn: true,
-	      questions: [], 
->>>>>>> CaptainKevin-feat/solutionView2
 	    };
 	  },
 
@@ -24446,14 +24441,9 @@
 	        return (
 	          React.createElement("tr", null, 
 	            React.createElement("td", null, React.createElement("p", null, "User: ", user.username)), 
-<<<<<<< HEAD
-	            React.createElement("td", null, React.createElement("p", null, "Solution: ", userSolution.solution)), 
-	            React.createElement("td", null, React.createElement("p", null, "Time Elasped: ", userSolution.time)), 
-	            React.createElement("td", null, React.createElement("p", null, "Votes: ", userSolution.votes)), 
-=======
 	            React.createElement("td", null, React.createElement("p", null, "Solution: ", user.questionSolved.solution)), 
+	            React.createElement("td", null, React.createElement("p", null, "Time Elasped: ", user.questionSolved.time)), 
 	            React.createElement("td", null, React.createElement("p", null, "Votes: ", user.questionSolved.votes)), 
->>>>>>> CaptainKevin-feat/solutionView2
 	            React.createElement("td", null, React.createElement("p", null, React.createElement("button", {onClick: this.upVote.bind(this, index), ref: index, className: "btn btn-primary"}, "Vote")))
 	          )
 	        )
@@ -24581,20 +24571,10 @@
 	  },
 
 	  componentDidMount: function() {
-<<<<<<< HEAD
-	    var data = {}
-	    $.ajax({
-	        url: window.location.origin + '/getUserData',
-	        contentType:"application/json",
-	        dataType: 'json',
-	        type: 'POST',
-	        data: JSON.stringify(data),
-=======
 	    $.ajax({
 	        url: window.location.origin + '/getUserData',
 	        dataType: 'json',
 	        type: 'GET',
->>>>>>> CaptainKevin-feat/solutionView2
 	        success: function(data) {
 	          this.setState({data: data});
 	        }.bind(this),
@@ -24630,10 +24610,7 @@
 	      React.createElement("div", {id: "page-content-wrapper"}, 
 	        React.createElement("div", {className: "container-fluid"}, 
 	          React.createElement("h2", null, "Regex Puzzles"), 
-<<<<<<< HEAD
-=======
 	          !this.props.loggedIn ? React.createElement("p", null, "If you would like to save your scores, ", React.createElement(Link, {to: "signin"}, "log in!")) : null, 
->>>>>>> CaptainKevin-feat/solutionView2
 	          React.createElement("table", {className: "questionContainer table table-hover"}, 
 	            React.createElement("tbody", null, 
 	              questions
