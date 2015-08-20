@@ -3,7 +3,7 @@ var React = require('react');
 var Router = require('react-router');
 var Link = Router.Link;
 
-var OverView = React.createClass({
+var QuestionsView = React.createClass({
   getInitialState: function(){
     return {data:null}
   },
@@ -23,7 +23,6 @@ var OverView = React.createClass({
   },
 
   render: function() {
-
     if (this.state.data) {
       var solvedArray = [];
       for (var i = 0; i < this.props.questions.length; i++) {
@@ -63,4 +62,4 @@ var OverView = React.createClass({
   }
 });
 
-module.exports = OverView;
+module.exports = QuestionsView;
