@@ -49,8 +49,6 @@ var signup = function(req, res) {
             points: Math.floor(Math.random()*1000),
             questionSolved: []
         });
-
-
       user.save(function(err, result) {
         if (err) res.status(404).send();
         res.cookie('username', result.username);
@@ -69,7 +67,8 @@ var submitSolution = function(req, res) {
         "questionSolved": {
           "qNumber": req.body.qNumber,
           "solved": true,
-          "solution": req.body.solution
+          "solution": req.body.solution,
+          "time": req.body.time
         }
       },
       $inc: {
@@ -83,21 +82,47 @@ var submitSolution = function(req, res) {
       }
       return res.json(model);
     });
+};
 
-
+var getUserData = function(req, res) {
+	var username = req.cookies.username
+  if (username === undefined) {
+    res.status(200).send(JSON.stringify({username:"Anonymous", questionSolved:[]}));
+  } else {
+  	User.findOne({username:username}, function(err, data){
+  		if(err){
+  		 res.status(404).send();
+  		} else {
+  			res.status(200).send(data)
+  		}
+  	})
+  }
 };
 
 var getSolutions = function(req, res) {
-  var username = req.cookies.username;
-  User.findOne({
-    username: username
-  }, function(err, data) {
+	var qNumber = req.body.qNumber;
+  User.aggregate([{$unwind:"$questionSolved"},{$match:{"questionSolved.qNumber":qNumber}},{$sort:{"questionSolved.votes":-1}}]).limit(10).exec(function(err, result){
     if (err) {
-      res.status(404).send();
+      res.send(404).send();
     } else {
-      res.status(200).send(data);
+      res.status(200).send(result);
     }
-  });
+  })
+};
+
+var upVote = function(req, res) {
+	var userId = req.body.userId;
+	var qNumber = req.body.qNumber;
+	User.update(
+     {"_id":userId, "questionSolved.qNumber": qNumber},
+     {$inc: {"questionSolved.$.votes": 1}},
+       function(err, model) {
+         if(err){
+        	console.log(err);
+        	return res.send(err);
+         }
+          return res.json(model);
+      });
 };
 
 var leaderboard = function(req, res){
@@ -105,7 +130,7 @@ var leaderboard = function(req, res){
 		if(err) res.status(404).send();
 		console.log(data);
 		res.status(200).send(data);
-	}).sort({totalScore:-1}).limit(10);
+	}).sort({points:-1}).limit(10);
 };
 
 
@@ -115,5 +140,7 @@ module.exports = {
 	signup: signup,
 	submitSolution: submitSolution,
 	getSolutions: getSolutions,
-	leaderboard: leaderboard
+	leaderboard: leaderboard,
+	getUserData: getUserData,
+	upVote: upVote
 };

@@ -3,8 +3,9 @@ var React = require('react');
 var Router = require('react-router');
 var Navigation = Router.Navigation;
 
-
 var Link = Router.Link;
+
+var cookie = require('react-cookie');
 
 var SignInView = React.createClass({
 	mixins: [Navigation],
@@ -18,7 +19,8 @@ var SignInView = React.createClass({
 
 	getInitialState: function(){
     return {
-      login: true
+      login: true,
+      username: ''
     };
   },
 
@@ -35,12 +37,16 @@ var SignInView = React.createClass({
 			contentType:"application/json",
 			dataType: 'json',
 			success: function(data){
+				that.setState({
+			    username: data 
+			  });
+			 	that.props.logStatus(true);
 				that.transitionTo('overview');
 			},
 			error: function(xhr, status, err){
 			  console.error(xhr, status, err.message);
 			  that.setState({
-			    login: false 
+			    login: false
 			  });
 			}
 		});
@@ -57,13 +63,13 @@ var SignInView = React.createClass({
 				  <div className="form-group">
 				    <label className="col-sm-2 control-label">Username</label>
 				    <div className="col-sm-10">
-				      <input className="form-control" placeholder="Username"/>
+				      <input ref="username" className="form-control" placeholder="Username"/>
 				    </div>
 				  </div>
 				  <div className="form-group">
 				    <label className="col-sm-2 control-label">Password</label>
 				    <div className="col-sm-10">
-				      <input type="password" className="form-control" placeholder="Password"/>
+				      <input ref="password" type="password" className="form-control" placeholder="Password"/>
 				    </div>
 				  </div>
 				  <div className="form-group">

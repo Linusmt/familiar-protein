@@ -6,4 +6,7 @@ module.exports = function (app) {
 	app.post('/submitSolution', userController.submitSolution);
 	app.post('/getSolutions', userController.getSolutions);
 	app.get('/leaderboard', userController.leaderboard);
+  app.post('/getUserData', userController.getUserData);
+  app.post('/upVote', userController.upVote);
+  app.get('/getUserData', userController.getUserData);
 };

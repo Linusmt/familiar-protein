@@ -9,13 +9,10 @@ var OverView = React.createClass({
   },
 
   componentDidMount: function() {
-    var data = {}
     $.ajax({
-        url: window.location.origin + '/getSolutions',
-        contentType:"application/json",
+        url: window.location.origin + '/getUserData',
         dataType: 'json',
-        type: 'POST',
-        data: JSON.stringify(data),
+        type: 'GET',
         success: function(data) {
           this.setState({data: data});
         }.bind(this),
@@ -51,6 +48,7 @@ var OverView = React.createClass({
       <div id='page-content-wrapper'>
         <div className='container-fluid'>
           <h2>Regex Puzzles</h2>
+          {!this.props.loggedIn ? <p>If you would like to save your scores, <Link to='signin'>log in!</Link></p> : null}
           <table className="questionContainer table table-hover">
             <tbody>
               {questions}
