@@ -70,7 +70,12 @@
 	    return {
 	      questions: [],
 	      username: cookie.load('username'),
+<<<<<<< HEAD
 	      loggedIn: cookie.load('username')
+=======
+	      loggedIn: true,
+	      questions: [], 
+>>>>>>> CaptainKevin-feat/solutionView2
 	    };
 	  },
 
@@ -145,7 +150,7 @@
 	          )
 	      
 	        ), 
-	        React.createElement(RouteHandler, {questions: this.state.questions, logStatus: this.onLogIn})
+	        React.createElement(RouteHandler, {loggedIn: this.state.loggedIn, questions: this.state.questions, logStatus: this.onLogIn})
 	      )
 	    )
 	  }
@@ -24438,18 +24443,17 @@
 	    var question = this.props.questions[this.props.params.qNumber - 1];
 	    if (this.state.data && this.state.userData) {
 	      var solutions = this.state.data.map(function(user, index) {
-	        var userSolution = {};
-	        for (var i = 0; i < user.questionSolved.length; i ++) {
-	          if (user.questionSolved[i].qNumber === question.qNumber) {
-	            userSolution = user.questionSolved[i];
-	          }
-	        }
 	        return (
 	          React.createElement("tr", null, 
 	            React.createElement("td", null, React.createElement("p", null, "User: ", user.username)), 
+<<<<<<< HEAD
 	            React.createElement("td", null, React.createElement("p", null, "Solution: ", userSolution.solution)), 
 	            React.createElement("td", null, React.createElement("p", null, "Time Elasped: ", userSolution.time)), 
 	            React.createElement("td", null, React.createElement("p", null, "Votes: ", userSolution.votes)), 
+=======
+	            React.createElement("td", null, React.createElement("p", null, "Solution: ", user.questionSolved.solution)), 
+	            React.createElement("td", null, React.createElement("p", null, "Votes: ", user.questionSolved.votes)), 
+>>>>>>> CaptainKevin-feat/solutionView2
 	            React.createElement("td", null, React.createElement("p", null, React.createElement("button", {onClick: this.upVote.bind(this, index), ref: index, className: "btn btn-primary"}, "Vote")))
 	          )
 	        )
@@ -24577,6 +24581,7 @@
 	  },
 
 	  componentDidMount: function() {
+<<<<<<< HEAD
 	    var data = {}
 	    $.ajax({
 	        url: window.location.origin + '/getUserData',
@@ -24584,6 +24589,12 @@
 	        dataType: 'json',
 	        type: 'POST',
 	        data: JSON.stringify(data),
+=======
+	    $.ajax({
+	        url: window.location.origin + '/getUserData',
+	        dataType: 'json',
+	        type: 'GET',
+>>>>>>> CaptainKevin-feat/solutionView2
 	        success: function(data) {
 	          this.setState({data: data});
 	        }.bind(this),
@@ -24619,6 +24630,10 @@
 	      React.createElement("div", {id: "page-content-wrapper"}, 
 	        React.createElement("div", {className: "container-fluid"}, 
 	          React.createElement("h2", null, "Regex Puzzles"), 
+<<<<<<< HEAD
+=======
+	          !this.props.loggedIn ? React.createElement("p", null, "If you would like to save your scores, ", React.createElement(Link, {to: "signin"}, "log in!")) : null, 
+>>>>>>> CaptainKevin-feat/solutionView2
 	          React.createElement("table", {className: "questionContainer table table-hover"}, 
 	            React.createElement("tbody", null, 
 	              questions
