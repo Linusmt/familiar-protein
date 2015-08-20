@@ -46,13 +46,13 @@
 
 	var React = __webpack_require__(1);
 
-	var OverView = __webpack_require__(157);
+	var OverView = __webpack_require__(205);
 	var DetailView = __webpack_require__(197);
 	var SignInView = __webpack_require__(198);
-	var SignUpView = __webpack_require__(199);
-	var TutorialView = __webpack_require__(200);
-	var SolutionView = __webpack_require__(201)
-	var LeaderBoardView = __webpack_require__(202);
+	var SignUpView = __webpack_require__(201);
+	var TutorialView = __webpack_require__(202);
+	var SolutionView = __webpack_require__(203)
+	var LeaderBoardView = __webpack_require__(204);
 
 	var Router = __webpack_require__(158);
 	var RouteHandler = Router.RouteHandler;
@@ -20524,79 +20524,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 157 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-
-	var Router = __webpack_require__(158);
-	var Link = Router.Link;
-
-	var OverView = React.createClass({displayName: "OverView",
-	  getInitialState: function(){
-	    return {data:null}
-	  },
-
-	  componentDidMount: function() {
-	    var data = {}
-	    $.ajax({
-	        url: window.location.origin + '/getSolutions',
-	        contentType:"application/json",
-	        dataType: 'json',
-	        type: 'POST',
-	        data: JSON.stringify(data),
-	        success: function(data) {
-	          this.setState({data: data});
-	        }.bind(this),
-	        error: function(xhr, status, err) {
-	          console.error(this.props.url, status, err.toString());
-	        }.bind(this)
-	      });
-	  },
-
-	  render: function() {
-
-	    if (this.state.data) {
-	      var solvedArray = [];
-	      for (var i = 0; i < this.props.questions.length; i++) {
-	        for (var j = 0; j < this.state.data.questionSolved.length;j++) {
-	          if (this.state.data.questionSolved[j].qNumber === i+1 && this.state.data.questionSolved[j].solved) {
-	            solvedArray[i] = true;
-	          }
-	        }
-	      }
-	      var questions = this.props.questions.map(function(question, index) {
-	        return (
-	          React.createElement("tr", {key: question.qNumber, className: "question"}, 
-	            React.createElement("td", null, React.createElement("b", null, question.title)), 
-	            React.createElement("td", null, React.createElement("p", null, question.description)), 
-	            React.createElement("td", null, React.createElement("p", {className: "points"}, "Points:", question.points)), 
-	            solvedArray[index] ? React.createElement("td", null, React.createElement(Link, {to: "solution", params: {qNumber:question.qNumber}, className: "btn btn-success"}, "Complete")) : React.createElement("td", null, React.createElement(Link, {to: "question", params: {qNumber:question.qNumber}, className: "btn btn-primary"}, "Solve"))
-	          )
-	        )
-	      });
-
-	    return (
-	      React.createElement("div", {id: "page-content-wrapper"}, 
-	        React.createElement("div", {className: "container-fluid"}, 
-	          React.createElement("h2", null, "Regex Puzzles"), 
-	          React.createElement("table", {className: "questionContainer table table-hover"}, 
-	            React.createElement("tbody", null, 
-	              questions
-	            )
-	          )
-	        )
-	      )
-	    );
-	    } else {
-	      return (React.createElement("div", null, "loading"));
-	    }
-	  }
-	});
-
-	module.exports = OverView;
-
-/***/ },
+/* 157 */,
 /* 158 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -24026,7 +23954,9 @@
 	module.exports= SignInView;
 
 /***/ },
-/* 199 */
+/* 199 */,
+/* 200 */,
+/* 201 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -24111,7 +24041,7 @@
 	module.exports= SignUpView;
 
 /***/ },
-/* 200 */
+/* 202 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1); 
@@ -24167,7 +24097,7 @@
 	module.exports = TutorialView;
 
 /***/ },
-/* 201 */
+/* 203 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -24259,7 +24189,7 @@
 
 
 /***/ },
-/* 202 */
+/* 204 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -24323,6 +24253,79 @@
 	});
 
 	module.exports = LeaderBoardView;
+
+/***/ },
+/* 205 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+
+	var Router = __webpack_require__(158);
+	var Link = Router.Link;
+
+	var OverView = React.createClass({displayName: "OverView",
+	  getInitialState: function(){
+	    return {data:null}
+	  },
+
+	  componentDidMount: function() {
+	    var data = {}
+	    $.ajax({
+	        url: window.location.origin + '/getSolutions',
+	        contentType:"application/json",
+	        dataType: 'json',
+	        type: 'POST',
+	        data: JSON.stringify(data),
+	        success: function(data) {
+	          this.setState({data: data});
+	        }.bind(this),
+	        error: function(xhr, status, err) {
+	          console.error(this.props.url, status, err.toString());
+	        }.bind(this)
+	      });
+	  },
+
+	  render: function() {
+
+	    if (this.state.data) {
+	      var solvedArray = [];
+	      for (var i = 0; i < this.props.questions.length; i++) {
+	        for (var j = 0; j < this.state.data.questionSolved.length;j++) {
+	          if (this.state.data.questionSolved[j].qNumber === i+1 && this.state.data.questionSolved[j].solved) {
+	            solvedArray[i] = true;
+	          }
+	        }
+	      }
+	      var questions = this.props.questions.map(function(question, index) {
+	        return (
+	          React.createElement("tr", {key: question.qNumber, className: "question"}, 
+	            React.createElement("td", null, React.createElement("b", null, question.title)), 
+	            React.createElement("td", null, React.createElement("p", null, question.description)), 
+	            React.createElement("td", null, React.createElement("p", {className: "points"}, "Points:", question.points)), 
+	            solvedArray[index] ? React.createElement("td", null, React.createElement(Link, {to: "solution", params: {qNumber:question.qNumber}, className: "btn btn-success"}, "Complete")) : React.createElement("td", null, React.createElement(Link, {to: "question", params: {qNumber:question.qNumber}, className: "btn btn-primary"}, "Solve"))
+	          )
+	        )
+	      });
+
+	    return (
+	      React.createElement("div", {id: "page-content-wrapper"}, 
+	        React.createElement("div", {className: "container-fluid"}, 
+	          React.createElement("h2", null, "Regex Puzzles"), 
+	          React.createElement("table", {className: "questionContainer table table-hover"}, 
+	            React.createElement("tbody", null, 
+	              questions
+	            )
+	          )
+	        )
+	      )
+	    );
+	    } else {
+	      return (React.createElement("div", null, "loading"));
+	    }
+	  }
+	});
+
+	module.exports = OverView;
 
 /***/ }
 /******/ ]);
