@@ -85,17 +85,11 @@ var SolutionView = React.createClass({
     var question = this.props.questions[this.props.params.qNumber - 1];
     if (this.state.data && this.state.userData) {
       var solutions = this.state.data.map(function(user, index) {
-        var userSolution = {};
-        for (var i = 0; i < user.questionSolved.length; i ++) {
-          if (user.questionSolved[i].qNumber === question.qNumber) {
-            userSolution = user.questionSolved[i];
-          }
-        }
         return (
           <tr>
             <td><p>User: {user.username}</p></td>
-            <td><p>Solution: {userSolution.solution}</p></td>
-            <td><p>Votes: {userSolution.votes}</p></td>
+            <td><p>Solution: {user.questionSolved.solution}</p></td>
+            <td><p>Votes: {user.questionSolved.votes}</p></td>
             <td><p><button onClick={this.upVote.bind(this, index)} ref={index} className="btn btn-primary">Vote</button></p></td>
           </tr>
         )

@@ -24,7 +24,8 @@ var App = React.createClass({
     return {
       questions: [],
       username: cookie.load('username'),
-      loggedIn: true
+      loggedIn: true,
+      questions: [], 
     };
   },
 
@@ -97,7 +98,7 @@ var App = React.createClass({
           </ul>
       
         </div>
-        <RouteHandler questions={this.state.questions} logStatus={this.onLogIn}/>
+        <RouteHandler loggedIn={this.state.loggedIn} questions={this.state.questions} logStatus={this.onLogIn}/>
       </div>
     )
   }

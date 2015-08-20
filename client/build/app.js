@@ -49,10 +49,10 @@
 	var OverView = __webpack_require__(157);
 	var DetailView = __webpack_require__(197);
 	var SignInView = __webpack_require__(198);
-	var SignUpView = __webpack_require__(201);
-	var TutorialView = __webpack_require__(202);
-	var SolutionView = __webpack_require__(203);
-	var LeaderBoardView = __webpack_require__(204);
+	var SignUpView = __webpack_require__(199);
+	var TutorialView = __webpack_require__(200);
+	var SolutionView = __webpack_require__(201);
+	var LeaderBoardView = __webpack_require__(202);
 
 	var Router = __webpack_require__(158);
 	var RouteHandler = Router.RouteHandler;
@@ -61,7 +61,7 @@
 	var Link = Router.Link;
 	var Navigation = Router.Navigation;
 
-	var cookie = __webpack_require__(199);
+	var cookie = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"react-cookie\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
 
 	var App = React.createClass({displayName: "App",
 	  mixins: [Navigation],
@@ -70,7 +70,8 @@
 	    return {
 	      questions: [],
 	      username: cookie.load('username'),
-	      loggedIn: true
+	      loggedIn: true,
+	      questions: [], 
 	    };
 	  },
 
@@ -143,7 +144,7 @@
 	          )
 	      
 	        ), 
-	        React.createElement(RouteHandler, {questions: this.state.questions, logStatus: this.onLogIn})
+	        React.createElement(RouteHandler, {loggedIn: this.state.loggedIn, questions: this.state.questions, logStatus: this.onLogIn})
 	      )
 	    )
 	  }
@@ -20560,13 +20561,10 @@
 	  },
 
 	  componentDidMount: function() {
-	    var data = {}
 	    $.ajax({
 	        url: window.location.origin + '/getUserData',
-	        contentType:"application/json",
 	        dataType: 'json',
-	        type: 'POST',
-	        data: JSON.stringify(data),
+	        type: 'GET',
 	        success: function(data) {
 	          this.setState({data: data});
 	        }.bind(this),
@@ -20602,6 +20600,7 @@
 	      React.createElement("div", {id: "page-content-wrapper"}, 
 	        React.createElement("div", {className: "container-fluid"}, 
 	          React.createElement("h2", null, "Regex Puzzles"), 
+	          !this.props.loggedIn ? React.createElement("p", null, "If you would like to save your scores, ", React.createElement(Link, {to: "signin"}, "log in!")) : null, 
 	          React.createElement("table", {className: "questionContainer table table-hover"}, 
 	            React.createElement("tbody", null, 
 	              questions
@@ -23976,7 +23975,7 @@
 
 	var Link = Router.Link;
 
-	var cookie = __webpack_require__(199);
+	var cookie = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"react-cookie\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
 
 	var SignInView = React.createClass({displayName: "SignInView",
 		mixins: [Navigation],
@@ -24063,215 +24062,6 @@
 /* 199 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var cookie = __webpack_require__(200);
-
-	var _rawCookies = {};
-	var _cookies = {};
-
-	if (typeof document !== 'undefined') {
-	  setRawCookie(document.cookie);
-	}
-
-	function load(name, doNotParse) {
-	  if (doNotParse) {
-	    return _rawCookies[name];
-	  }
-
-	  return _cookies[name];
-	}
-
-	function save(name, val, opt) {
-	  _cookies[name] = val;
-	  _rawCookies[name] = val;
-
-	  // allow you to work with cookies as objects.
-	  if (typeof val === 'object') {
-	    _rawCookies[name] = JSON.stringify(val);
-	  }
-
-	  // Cookies only work in the browser
-	  if (typeof document !== 'undefined') {
-	    document.cookie = cookie.serialize(name, _rawCookies[name], opt);
-	  }
-	}
-
-	function remove(name, path) {
-	  delete _rawCookies[name];
-	  delete _cookies[name];
-
-	  if (typeof document !== 'undefined') {
-	    var removeCookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-
-	    if (path) {
-	      removeCookie += ' path=' + path;
-	    }
-
-	    document.cookie = removeCookie;
-	  }
-	}
-
-	function setRawCookie(rawCookie) {
-	  _rawCookies = {};
-	  _cookies = {};
-
-	  if (!rawCookie) {
-	    return;
-	  }
-
-	  var rawCookies = cookie.parse(rawCookie);
-
-	  for (var key in rawCookies) {
-	    _rawCookies[key] = rawCookies[key];
-
-	    try {
-	      _cookies[key] = JSON.parse(rawCookies[key]);
-	    } catch(e) {
-	      // Not serialized object
-	      _cookies[key] = rawCookies[key];
-	    }
-	  }
-	}
-
-	var reactCookie = {
-	  load: load,
-	  save: save,
-	  remove: remove,
-	  setRawCookie: setRawCookie
-	};
-
-	if (typeof window !== 'undefined') {
-	  window['reactCookie'] = reactCookie;
-	}
-
-	module.exports = reactCookie;
-
-
-/***/ },
-/* 200 */
-/***/ function(module, exports) {
-
-	/*!
-	 * cookie
-	 * Copyright(c) 2012-2014 Roman Shtylman
-	 * MIT Licensed
-	 */
-
-	/**
-	 * Module exports.
-	 * @public
-	 */
-
-	exports.parse = parse;
-	exports.serialize = serialize;
-
-	/**
-	 * Module variables.
-	 * @private
-	 */
-
-	var decode = decodeURIComponent;
-	var encode = encodeURIComponent;
-
-	/**
-	 * Parse a cookie header.
-	 *
-	 * Parse the given cookie header string into an object
-	 * The object has the various cookies as keys(names) => values
-	 *
-	 * @param {string} str
-	 * @param {object} [options]
-	 * @return {string}
-	 * @public
-	 */
-
-	function parse(str, options) {
-	  var obj = {}
-	  var opt = options || {};
-	  var pairs = str.split(/; */);
-	  var dec = opt.decode || decode;
-
-	  pairs.forEach(function(pair) {
-	    var eq_idx = pair.indexOf('=')
-
-	    // skip things that don't look like key=value
-	    if (eq_idx < 0) {
-	      return;
-	    }
-
-	    var key = pair.substr(0, eq_idx).trim()
-	    var val = pair.substr(++eq_idx, pair.length).trim();
-
-	    // quoted values
-	    if ('"' == val[0]) {
-	      val = val.slice(1, -1);
-	    }
-
-	    // only assign once
-	    if (undefined == obj[key]) {
-	      obj[key] = tryDecode(val, dec);
-	    }
-	  });
-
-	  return obj;
-	}
-
-	/**
-	 * Serialize data into a cookie header.
-	 *
-	 * Serialize the a name value pair into a cookie string suitable for
-	 * http headers. An optional options object specified cookie parameters.
-	 *
-	 * serialize('foo', 'bar', { httpOnly: true })
-	 *   => "foo=bar; httpOnly"
-	 *
-	 * @param {string} name
-	 * @param {string} val
-	 * @param {object} [options]
-	 * @return {string}
-	 * @public
-	 */
-
-	function serialize(name, val, options) {
-	  var opt = options || {};
-	  var enc = opt.encode || encode;
-	  var pairs = [name + '=' + enc(val)];
-
-	  if (null != opt.maxAge) {
-	    var maxAge = opt.maxAge - 0;
-	    if (isNaN(maxAge)) throw new Error('maxAge should be a Number');
-	    pairs.push('Max-Age=' + maxAge);
-	  }
-
-	  if (opt.domain) pairs.push('Domain=' + opt.domain);
-	  if (opt.path) pairs.push('Path=' + opt.path);
-	  if (opt.expires) pairs.push('Expires=' + opt.expires.toUTCString());
-	  if (opt.httpOnly) pairs.push('HttpOnly');
-	  if (opt.secure) pairs.push('Secure');
-
-	  return pairs.join('; ');
-	}
-
-	/**
-	 * Try decoding a string using a decoding function.
-	 *
-	 * @param {string} str
-	 * @param {function} decode
-	 * @private
-	 */
-
-	function tryDecode(str, decode) {
-	  try {
-	    return decode(str);
-	  } catch (e) {
-	    return str;
-	  }
-	}
-
-
-/***/ },
-/* 201 */
-/***/ function(module, exports, __webpack_require__) {
-
 	var React = __webpack_require__(1);
 
 	var Router = __webpack_require__(158);
@@ -24352,7 +24142,7 @@
 	module.exports= SignUpView;
 
 /***/ },
-/* 202 */
+/* 200 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1); 
@@ -24408,7 +24198,7 @@
 	module.exports = TutorialView;
 
 /***/ },
-/* 203 */
+/* 201 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -24498,17 +24288,11 @@
 	    var question = this.props.questions[this.props.params.qNumber - 1];
 	    if (this.state.data && this.state.userData) {
 	      var solutions = this.state.data.map(function(user, index) {
-	        var userSolution = {};
-	        for (var i = 0; i < user.questionSolved.length; i ++) {
-	          if (user.questionSolved[i].qNumber === question.qNumber) {
-	            userSolution = user.questionSolved[i];
-	          }
-	        }
 	        return (
 	          React.createElement("tr", null, 
 	            React.createElement("td", null, React.createElement("p", null, "User: ", user.username)), 
-	            React.createElement("td", null, React.createElement("p", null, "Solution: ", userSolution.solution)), 
-	            React.createElement("td", null, React.createElement("p", null, "Votes: ", userSolution.votes)), 
+	            React.createElement("td", null, React.createElement("p", null, "Solution: ", user.questionSolved.solution)), 
+	            React.createElement("td", null, React.createElement("p", null, "Votes: ", user.questionSolved.votes)), 
 	            React.createElement("td", null, React.createElement("p", null, React.createElement("button", {onClick: this.upVote.bind(this, index), ref: index, className: "btn btn-primary"}, "Vote")))
 	          )
 	        )
@@ -24557,7 +24341,7 @@
 
 
 /***/ },
-/* 204 */
+/* 202 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);

@@ -8,4 +8,5 @@ module.exports = function (app) {
 	app.get('/leaderboard', userController.leaderboard);
   app.post('/getUserData', userController.getUserData);
   app.post('/upVote', userController.upVote);
+  app.get('/getUserData', userController.getUserData);
 };

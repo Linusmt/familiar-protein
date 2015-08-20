@@ -86,24 +86,28 @@ var submitSolution = function(req, res) {
 
 var getUserData = function(req, res) {
 	var username = req.cookies.username
-	User.findOne({username:username}, function(err, data){
-		if(err){
-		 res.status(404).send();
-		} else {
-			res.status(200).send(data)
-		}
-	})
+  if (username === undefined) {
+    res.status(200).send(JSON.stringify({username:"Anonymous", questionSolved:[]}));
+  } else {
+  	User.findOne({username:username}, function(err, data){
+  		if(err){
+  		 res.status(404).send();
+  		} else {
+  			res.status(200).send(data)
+  		}
+  	})
+  }
 };
 
 var getSolutions = function(req, res) {
 	var qNumber = req.body.qNumber;
-	User.find({questionSolved:{$elemMatch:{"solved":true, "qNumber":qNumber}}}, function(err, data){
-		if (err) {
-			res.send(404).send();
-		} else {
-			res.status(200).send(data);
-		}
-	})
+  User.aggregate([{$unwind:"$questionSolved"},{$match:{"questionSolved.qNumber":qNumber}},{$sort:{"questionSolved.votes":-1}}]).limit(10).exec(function(err, result){
+    if (err) {
+      res.send(404).send();
+    } else {
+      res.status(200).send(result);
+    }
+  })
 };
 
 var upVote = function(req, res) {
