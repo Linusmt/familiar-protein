@@ -145,15 +145,20 @@ var DetailView = React.createClass({
       <div id='page-content-wrapper'>
         <div className='container-fluid'>
           <div className="row">
-            <div className="col-lg-12">            
-              <h2>{question.title}<span className="points">Points:{question.points}</span></h2>
+            <div className="col-lg-11">            
+              <h2>{question.title}<span className="points">Points: {question.points}</span></h2>
+            </div>
+            <div className="col-lg-1">
+              <Link to="questions" className="btn btn-primary back">Back</Link>
+            </div>
+          </div>
+
+          <div className="row">
+            <div className="col-lg-12"> 
               <p>{question.description}</p>
               <Timer stop={this.state.solved} callbackParent={this.onTimeChange}/>
             </div>
-
-            <div className="col-sm-2">
-              <Link to="overview" className="btn btn-primary back">Back</Link>
-            </div>
+          </div>
 
             <form className="form-inline text-center" onSubmit={this.handleSubmit}>
               <span className="solution">/<textarea ref="solutionText" onChange={this.setRegex} rows="1" cols="50" type="text" className="regex form-control" placeholder="Regex solution..."></textarea>/</span>
@@ -180,7 +185,6 @@ var DetailView = React.createClass({
                 {this.displayTestCases('falsy', false)}
               </div>
             </div>  
-          </div>
         </div>
       </div>
     )
@@ -193,7 +197,7 @@ var Timer = React.createClass({
   getInitialState: function() {
     return {
       secondsElapsed: 0,
-      time: ''
+      time: '00:00'
     };
   },
   tick: function() {
@@ -232,7 +236,7 @@ var Timer = React.createClass({
   },
   render: function() {
     return (
-      <div>Time Elapsed: {this.state.time}</div>
+      <div className="time">Time Elapsed: {this.state.time}</div>
     );
   }
 });

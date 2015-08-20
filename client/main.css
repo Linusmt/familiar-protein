@@ -171,5 +171,11 @@ form {
 .points {
   font-size: 0.75em;
   color: #999999;
+  padding-left: 20px;
+}
+
+.time {
+  font-size: 1em;
+  color: #999999;
 }
 

@@ -34,10 +34,12 @@ var LeaderBoardView = React.createClass({
 
 		//Scores should be returned as an array with each element being an object
 		//The object should hold the username and the score
+		var counter = 0;
 		var scores = this.state.scores.map(function(score){
-			console.log(score);
+			counter++;
 			return (
 				<tr key={score.username} className="question">
+					<td><b>{counter}</b></td>
 					<td><b>{score.username}</b></td>
 					<td><b>{score.points}</b></td>
 				</tr>
@@ -45,13 +47,15 @@ var LeaderBoardView = React.createClass({
 		});
 
 		return (
-			<div>
-				<h2> Leaderboard </h2>
-				<table className = "questionContainer table table-hover">
-					<tbody>
-						{scores}
-					</tbody>
-				</table> 
+			<div id='page-content-wrapper'> 
+        <div className='container-fluid'>
+					<h2> Leaderboard </h2>
+					<table className = "questionContainer table table-hover">
+						<tbody>
+							{scores}
+						</tbody>
+					</table> 
+				</div>	
 			</div>
 		)
 	}
