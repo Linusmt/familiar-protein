@@ -21,6 +21,9 @@ var App = React.createClass({
   mixins: [Navigation],
 
   getInitialState: function(){
+    if (cookie.load('username')) {
+      this.getUserData();
+    }
     return {
       questions: [],
       username: cookie.load('username'),
@@ -29,6 +32,7 @@ var App = React.createClass({
   },
 
   onLogIn: function() {
+    this.getUserData();
     this.setState({
       username: cookie.load('username'),
       loggedIn: cookie.load('username')
@@ -64,6 +68,20 @@ var App = React.createClass({
     this.loadAllQuestions();
   },
 
+  getUserData: function() {
+    $.ajax({
+        url: window.location.origin + '/getUserData',
+        dataType: 'json',
+        type: 'GET',
+        success: function(data) {
+          this.setState({userData: data});
+        }.bind(this),
+        error: function(xhr, status, err) {
+          console.error(this.props.url, status, err.toString());
+        }.bind(this)
+      });
+  },
+
   render: function() {
 
     return (
@@ -92,7 +110,7 @@ var App = React.createClass({
           </ul>
       
         </div>
-        <RouteHandler loggedIn={this.state.loggedIn} questions={this.state.questions} logStatus={this.onLogIn}/>
+        <RouteHandler userData={this.state.userData} loggedIn={this.state.loggedIn} questions={this.state.questions} logStatus={this.onLogIn}/>
       </div>
     )
   }

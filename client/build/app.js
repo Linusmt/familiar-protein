@@ -67,6 +67,9 @@
 	  mixins: [Navigation],
 
 	  getInitialState: function(){
+	    if (cookie.load('username')) {
+	      this.getUserData();
+	    }
 	    return {
 	      questions: [],
 	      username: cookie.load('username'),
@@ -75,6 +78,7 @@
 	  },
 
 	  onLogIn: function() {
+	    this.getUserData();
 	    this.setState({
 	      username: cookie.load('username'),
 	      loggedIn: cookie.load('username')
@@ -110,6 +114,20 @@
 	    this.loadAllQuestions();
 	  },
 
+	  getUserData: function() {
+	    $.ajax({
+	        url: window.location.origin + '/getUserData',
+	        dataType: 'json',
+	        type: 'GET',
+	        success: function(data) {
+	          this.setState({userData: data});
+	        }.bind(this),
+	        error: function(xhr, status, err) {
+	          console.error(this.props.url, status, err.toString());
+	        }.bind(this)
+	      });
+	  },
+
 	  render: function() {
 
 	    return (
@@ -138,7 +156,7 @@
 	          )
 	      
 	        ), 
-	        React.createElement(RouteHandler, {loggedIn: this.state.loggedIn, questions: this.state.questions, logStatus: this.onLogIn})
+	        React.createElement(RouteHandler, {userData: this.state.userData, loggedIn: this.state.loggedIn, questions: this.state.questions, logStatus: this.onLogIn})
 	      )
 	    )
 	  }
@@ -20569,7 +20587,6 @@
 	  },
 
 	  render: function() {
-
 	    if (this.state.data) {
 	      var solvedArray = [];
 	      for (var i = 0; i < this.props.questions.length; i++) {
@@ -23857,6 +23874,18 @@
 
 	  render: function() {
 	    var question = this.props.questions[this.props.params.qNumber - 1];
+	    var nextQuestion = 0;
+	    var hasSolvedNextQuestion = false;
+	    if (question.qNumber === this.props.questions.length) {
+	      nextQuestion = 1;
+	    } else {
+	      nextQuestion = question.qNumber+1
+	    }
+	    for (var i = 0; i < this.props.userData.questionSolved.length;i++) {
+	      if (this.props.userData.questionSolved[i].qNumber === nextQuestion) {
+	        hasSolvedNextQuestion = true;
+	      }    
+	    }
 
 	    if (this.props.questions.length > 0 && question === undefined) {
 	      this.transitionTo('/');
@@ -23873,11 +23902,12 @@
 	      React.createElement("div", {id: "page-content-wrapper"}, 
 	        React.createElement("div", {className: "container-fluid"}, 
 	          React.createElement("div", {className: "row"}, 
-	            React.createElement("div", {className: "col-lg-11"}, 
+	            React.createElement("div", {className: "col-lg-10"}, 
 	              React.createElement("h2", null, question.title, React.createElement("span", {className: "points"}, "Points: ", question.points))
 	            ), 
-	            React.createElement("div", {className: "col-lg-1"}, 
-	              React.createElement(Link, {to: "questions", className: "btn btn-primary back"}, "Back")
+	            React.createElement("div", {className: "col-lg-2"}, 
+	              React.createElement(Link, {to: "questions", className: "btn btn-primary back"}, "Back"), 
+	              !hasSolvedNextQuestion ? React.createElement(Link, {to: "question", params: {qNumber:nextQuestion}, className: "btn btn-primary"}, "Next Question"): React.createElement(Link, {to: "solution", params: {qNumber:nextQuestion}, className: "btn btn-success"}, "Next Solution")
 	            )
 	          ), 
 
@@ -24500,6 +24530,20 @@
 
 	  render: function() {
 	    var question = this.props.questions[this.props.params.qNumber - 1];
+	    var nextQuestion = 0;
+	    var hasSolvedNextQuestion = false;
+	    if (question.qNumber === this.props.questions.length) {
+	      nextQuestion = 1;
+	    } else {
+	      nextQuestion = question.qNumber+1
+	    }
+	    for (var i = 0; i < this.props.userData.questionSolved.length;i++) {
+	      if (this.props.userData.questionSolved[i].qNumber === nextQuestion) {
+	        hasSolvedNextQuestion = true;
+	      }    
+	    }
+
+
 	    if (this.state.data && this.state.userData) {
 	      var solutions = this.state.data.map(function(user, index) {
 	        return (
@@ -24522,24 +24566,27 @@
 	      }
 
 	      return (
-	        React.createElement("div", {className: "question-solve"}, 
-	          React.createElement("div", {className: "row"}, 
-	            React.createElement("div", {className: "col-sm-10"}, 
-	              React.createElement("h2", null, question.title, " ", React.createElement("span", {className: "points"}, "Points: ", question.points)), 
-	              React.createElement("p", null, question.description)
-	            ), 
-	            React.createElement("div", {className: "col-sm-2"}, 
-	              React.createElement(Link, {to: "questions", className: "btn btn-primary back"}, "Back")
-	            ), 
+	        React.createElement("div", {id: "page-content-wrapper"}, 
+	          React.createElement("div", {className: "container-fluid"}, 
+	            React.createElement("div", {className: "row"}, 
+	              React.createElement("div", {className: "col-sm-10"}, 
+	                React.createElement("h2", null, question.title, " ", React.createElement("span", {className: "points"}, "Points: ", question.points)), 
+	                React.createElement("p", null, question.description)
+	              ), 
+	              React.createElement("div", {className: "col-sm-2"}, 
+	                React.createElement(Link, {to: "questions", className: "btn btn-primary back"}, "Back"), 
+	                !hasSolvedNextQuestion ? React.createElement(Link, {to: "question", params: {qNumber:nextQuestion}, className: "btn btn-primary"}, "Next Question"): React.createElement(Link, {to: "solution", params: {qNumber:nextQuestion}, className: "btn btn-success"}, "Next Solution")
+	              ), 
 
-	            React.createElement("div", {className: "col-sm-12"}, 
-	              React.createElement("h4", null, "Your Solution:"), 
-	              React.createElement("p", null, solution), 
-	              React.createElement("p", null, "Time Elapsed: ", React.createElement("span", {className: "time"}, time)), 
-	              React.createElement("h4", null, "Other solutions:"), 
-	              React.createElement("table", {className: "questionContainer table table-hover"}, 
-	                React.createElement("tbody", null, 
-	                  solutions
+	              React.createElement("div", {className: "col-sm-12"}, 
+	                React.createElement("h4", null, "Your Solution:"), 
+	                React.createElement("p", null, solution), 
+	                React.createElement("p", null, "Time Elapsed: ", React.createElement("span", {className: "time"}, time)), 
+	                React.createElement("h4", null, "Other solutions:"), 
+	                React.createElement("table", {className: "questionContainer table table-hover"}, 
+	                  React.createElement("tbody", null, 
+	                    solutions
+	                  )
 	                )
 	              )
 	            )
@@ -24547,7 +24594,7 @@
 	        )
 	      )
 	    } else {
-	      return (React.createElement("div", null, "loading"))
+	      return (React.createElement("div", null))
 	    }
 	  }
 	});

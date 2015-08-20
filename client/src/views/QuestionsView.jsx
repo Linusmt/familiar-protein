@@ -23,7 +23,6 @@ var QuestionsView = React.createClass({
   },
 
   render: function() {
-
     if (this.state.data) {
       var solvedArray = [];
       for (var i = 0; i < this.props.questions.length; i++) {
