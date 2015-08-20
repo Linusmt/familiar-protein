@@ -1,6 +1,6 @@
 var React = require('react');
 
-var OverView = require('./views/OverView.jsx');
+var QuestionsView = require('./views/QuestionsView.jsx');
 var DetailView = require('./views/DetailView.jsx');
 var SignInView = require('./views/SignInView.jsx');
 var SignUpView = require('./views/SignUpView.jsx');
@@ -24,20 +24,14 @@ var App = React.createClass({
     return {
       questions: [],
       username: cookie.load('username'),
-<<<<<<< HEAD
       loggedIn: cookie.load('username')
-=======
-      loggedIn: true,
-      questions: [], 
->>>>>>> CaptainKevin-feat/solutionView2
     };
   },
 
-  onLogIn: function(status) {
-    console.log(cookie.load('username'));
+  onLogIn: function() {
     this.setState({
       username: cookie.load('username'),
-      loggedIn: status
+      loggedIn: cookie.load('username')
     });
   },
 
@@ -81,25 +75,19 @@ var App = React.createClass({
             </li>
             <li>Signed in as: {this.state.username}  </li>
             <li>
-              <Link to='overview'>Questions</Link>
+              <Link to='default'>Profile</Link>
             </li>
             <li>
-              <Link to='default'>Profile</Link>
+              <Link to='questions'>Questions</Link>
             </li>
             <li>
               <Link to='leaderboard'>Leaderboard</Link>
             </li>
             <li>
-              <Link to='default'>Solutions</Link>
-            </li>
-            <li>
               <Link to='tutorial'>Regex Cheatsheet</Link>
             </li>
             <li>
-              {!this.state.loggedIn ? <Link to='signin'>Signin</Link> : null}
-            </li>
-            <li>
-              {this.state.loggedIn ? <Link onClick={this.onLogout} to='signin'>Logout</Link> : null}
+              {this.state.loggedIn ? <Link onClick={this.onLogout} to='signin'>Logout</Link> : <Link to='signin'>Signin</Link> }
             </li>
           </ul>
       
@@ -116,7 +104,7 @@ var routes = (
     <Route name="tutorial" path="/tutorial" handler={TutorialView}/>
     <Route name="question" path="/question/:qNumber" handler={DetailView}/>
     <Route name="solution" path="/solution/:qNumber" handler={SolutionView}/>
-    <Route name="overview" path= "/profile" handler={OverView}/>
+    <Route name="questions" path= "/questions" handler={QuestionsView}/>
     <Route name="signin" path= "/signin" handler = {SignInView}/>
     <Route name="signup" path= "/signup" handler = {SignUpView}/>
     <Route name="leaderboard" path= "leaderboard" handler= {LeaderBoardView}/>

@@ -16,7 +16,6 @@ var signin = function(req, res) {
       res.send(418, err);
     } else {
       if (bcrypt.compareSync(req.body[1], data.password)) {
-        res.cookie('username', data.username);
         res.status(200).send(data);
       }
       res.status(404).send();
@@ -51,7 +50,6 @@ var signup = function(req, res) {
       });
       user.save(function(err, result) {
         if (err) res.status(404).send();
-        res.cookie('username', result.username);
         res.status(200).json(result.username);
       });
     }

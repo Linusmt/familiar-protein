@@ -112,7 +112,7 @@ var SolutionView = React.createClass({
               <p>{question.description}</p>
             </div>
             <div className="col-sm-2">
-              <Link to="overview" className="btn btn-primary back">Back</Link>
+              <Link to="questions" className="btn btn-primary back">Back</Link>
             </div>
 
             <div className="col-sm-12">

@@ -19,8 +19,7 @@ var SignInView = React.createClass({
 
 	getInitialState: function(){
     return {
-      login: true,
-      username: ''
+      login: true
     };
   },
 
@@ -37,11 +36,9 @@ var SignInView = React.createClass({
 			contentType:"application/json",
 			dataType: 'json',
 			success: function(data){
-				that.setState({
-			    username: data 
-			  });
-			 	that.props.logStatus(true);
-				that.transitionTo('overview');
+			  cookie.save('username', username);
+			 	that.props.logStatus();
+				that.transitionTo('questions');
 			},
 			error: function(xhr, status, err){
 			  console.error(xhr, status, err.message);
