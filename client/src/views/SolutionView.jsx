@@ -105,7 +105,8 @@ var SolutionView = React.createClass({
       }
 
       return (
-        <div className="question-solve">
+        <div id='page-content-wrapper'>
+          <div className='container-fluid'>
           <div className="row">
             <div className="col-sm-10">
               <h2>{question.title} <span className="points">Points: {question.points}</span></h2>
@@ -127,6 +128,7 @@ var SolutionView = React.createClass({
               </table>
             </div>
           </div>
+        </div>
         </div>
       )
     } else {

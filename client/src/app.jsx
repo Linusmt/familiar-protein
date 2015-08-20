@@ -72,7 +72,7 @@ var App = React.createClass({
         <div id='sidebar-wrapper'>
           <ul className='sidebar-nav'>
             <li className='sidebar-brand'>
-              <Link to='default'>Regex Game</Link>
+              <Link to='questions'>Regex Game</Link>
             </li>
             <li>Signed in as: {this.state.username}  </li>
             <li>
@@ -110,7 +110,7 @@ var routes = (
     <Route name="profile" path= "/profile" handler = {ProfileView}/>
 
     <Route name="leaderboard" path= "leaderboard" handler= {LeaderBoardView}/>
-    <DefaultRoute name="default" handler={SignInView} />
+    <DefaultRoute name="default" handler={QuestionsView} />
 
 
   </Route>
