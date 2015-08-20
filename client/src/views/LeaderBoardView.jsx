@@ -4,7 +4,7 @@ var Navigation = Router.Navigation;
 var Link = Router.Link;
 
 var LeaderBoardView = React.createClass({
-	mixis: [Navigation],
+	mixins: [Navigation],
 
 	getInitialState: function(){
 		return {
@@ -30,8 +30,6 @@ var LeaderBoardView = React.createClass({
 	},
 
 	render: function(){
-
-
 		//Scores should be returned as an array with each element being an object
 		//The object should hold the username and the score
 		var counter = 0;
@@ -47,15 +45,16 @@ var LeaderBoardView = React.createClass({
 		});
 
 		return (
-			<div id='page-content-wrapper'> 
+
+			<div id='page-content-wrapper'>
         <div className='container-fluid'>
-					<h2> Leaderboard </h2>
-					<table className = "questionContainer table table-hover">
-						<tbody>
-							{scores}
-						</tbody>
-					</table> 
-				</div>	
+				<h2> Leaderboard </h2>
+				<table className = "questionContainer table table-hover">
+					<tbody>
+						{scores}
+					</tbody>
+				</table> 
+			</div>
 			</div>
 		)
 	}

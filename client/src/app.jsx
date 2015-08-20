@@ -7,6 +7,7 @@ var SignUpView = require('./views/SignUpView.jsx');
 var TutorialView = require('./views/RegexTutorialView.jsx');
 var SolutionView = require('./views/SolutionView.jsx');
 var LeaderBoardView = require('./views/LeaderBoardView.jsx');
+var ProfileView = require('./views/ProfileView.jsx');
 
 var Router = require('react-router');
 var RouteHandler = Router.RouteHandler;
@@ -71,11 +72,11 @@ var App = React.createClass({
         <div id='sidebar-wrapper'>
           <ul className='sidebar-nav'>
             <li className='sidebar-brand'>
-              <Link to='default'>Regex Game</Link>
+              <Link to='questions'>Regex Game</Link>
             </li>
             <li>Signed in as: {this.state.username}  </li>
             <li>
-              <Link to='default'>Profile</Link>
+              <Link to='profile'>Profile</Link>
             </li>
             <li>
               <Link to='questions'>Questions</Link>
@@ -86,11 +87,10 @@ var App = React.createClass({
             <li>
               <Link to='tutorial'>Regex Cheatsheet</Link>
             </li>
-            <li>
+             <li>
               {this.state.loggedIn ? <Link onClick={this.onLogout} to='signin'>Logout</Link> : <Link to='signin'>Signin</Link> }
             </li>
           </ul>
-      
         </div>
         <RouteHandler loggedIn={this.state.loggedIn} questions={this.state.questions} logStatus={this.onLogIn}/>
       </div>
@@ -107,8 +107,12 @@ var routes = (
     <Route name="questions" path= "/questions" handler={QuestionsView}/>
     <Route name="signin" path= "/signin" handler = {SignInView}/>
     <Route name="signup" path= "/signup" handler = {SignUpView}/>
+    <Route name="profile" path= "/profile" handler = {ProfileView}/>
+
     <Route name="leaderboard" path= "leaderboard" handler= {LeaderBoardView}/>
-    <DefaultRoute name="default" handler={SignInView} />
+    <DefaultRoute name="default" handler={QuestionsView} />
+
+
   </Route>
 );
 
