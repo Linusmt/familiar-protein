@@ -191,26 +191,27 @@ var DetailView = React.createClass({
 
 var Timer = React.createClass({
   getInitialState: function() {
-    return {secondsElapsed: 0};
+    return {
+      secondsElapsed: 0,
+      time: ''
+    };
   },
   tick: function() {
     if(this.props.stop === true) {
       clearInterval(this.interval);  
     } else {
-      this.setState({secondsElapsed: this.state.secondsElapsed + 1});
-      this.props.callbackParent(this.state.secondsElapsed); // notify detailView that there is a change in time
+      this.setState({
+        secondsElapsed: this.state.secondsElapsed + 1
+      });
+      this.setState({
+        time: this.stringifyTime(this.state.secondsElapsed)
+      });
+      this.props.callbackParent(this.state.time); // notify detailView that there is a change in time
     }
   },
-  componentDidMount: function() {
-    this.interval = setInterval(this.tick, 1000);
-      },
-  componentWillUnmount: function() {
-    clearInterval(this.interval);
-  },
-  render: function() {
+  stringifyTime: function(seconds) {
     var time = new Date(0);
-    time.setSeconds(this.state.secondsElapsed);
-
+    time.setSeconds(seconds);
     var minutes = time.getMinutes();
     var seconds = time.getSeconds();
 
@@ -221,8 +222,17 @@ var Timer = React.createClass({
       seconds = '0'+ seconds;
     }
 
+    return minutes+':'+seconds;
+  },
+  componentDidMount: function() {
+    this.interval = setInterval(this.tick, 1000);
+  },
+  componentWillUnmount: function() {
+    clearInterval(this.interval);
+  },
+  render: function() {
     return (
-      <div>Time Elapsed: {minutes}:{seconds}</div>
+      <div>Time Elapsed: {this.state.time}</div>
     );
   }
 });

@@ -34,21 +34,21 @@ var signin = function(req, res) {
 
 var signup = function(req, res) {
   User.findOne({
-      username: req.body[0]
-    }, function(err, data) {
-      if (data) {
-        console.log('user already exists');
-        res.status(418).send();
-      } else {
-        var hash = bcrypt.hashSync(req.body[1]);
-        console.log(hash);
+    username: req.body[0]
+  }, function(err, data) {
+    if (data) {
+      console.log('user already exists');
+      res.status(418).send();
+    } else {
+      var hash = bcrypt.hashSync(req.body[1]);
+      console.log(hash);
 
-        var user = new User({
-            username: req.body[0],
-            password: hash,
-            points: Math.floor(Math.random()*1000),
-            questionSolved: []
-        });
+      var user = new User({
+        username: req.body[0],
+        password: hash,
+        points: Math.floor(Math.random() * 1000),
+        questionSolved: []
+      });
       user.save(function(err, result) {
         if (err) res.status(404).send();
         res.cookie('username', result.username);
@@ -85,58 +85,74 @@ var submitSolution = function(req, res) {
 };
 
 var getUserData = function(req, res) {
-	var username = req.cookies.username
-	User.findOne({username:username}, function(err, data){
-		if(err){
-		 res.status(404).send();
-		} else {
-			res.status(200).send(data)
-		}
-	})
+  var username = req.cookies.username;
+  User.findOne({
+    username: username
+  }, function(err, data) {
+    if (err) {
+      res.status(404).send();
+    } else {
+      res.status(200).send(data);
+    }
+  });
 };
 
 var getSolutions = function(req, res) {
-	var qNumber = req.body.qNumber;
-	User.find({questionSolved:{$elemMatch:{"solved":true, "qNumber":qNumber}}}, function(err, data){
-		if (err) {
-			res.send(404).send();
-		} else {
-			res.status(200).send(data);
-		}
-	})
+  var qNumber = req.body.qNumber;
+  User.find({
+    questionSolved: {
+      $elemMatch: {
+        "solved": true,
+        "qNumber": qNumber
+      }
+    }
+  }, function(err, data) {
+    if (err) {
+      res.send(404).send();
+    } else {
+      res.status(200).send(data);
+    }
+  });
 };
 
 var upVote = function(req, res) {
-	var userId = req.body.userId;
-	var qNumber = req.body.qNumber;
-	User.update(
-     {"_id":userId, "questionSolved.qNumber": qNumber},
-     {$inc: {"questionSolved.$.votes": 1}},
-       function(err, model) {
-         if(err){
-        	console.log(err);
-        	return res.send(err);
-         }
-          return res.json(model);
-      });
+  var userId = req.body.userId;
+  var qNumber = req.body.qNumber;
+  User.update({
+      "_id": userId,
+      "questionSolved.qNumber": qNumber
+    }, {
+      $inc: {
+        "questionSolved.$.votes": 1
+      }
+    },
+    function(err, model) {
+      if (err) {
+        console.log(err);
+        return res.send(err);
+      }
+      return res.json(model);
+    });
 };
 
-var leaderboard = function(req, res){
-	User.find({}, function(err, data){
-		if(err) res.status(404).send();
-		console.log(data);
-		res.status(200).send(data);
-	}).sort({points:-1}).limit(10);
+var leaderboard = function(req, res) {
+  User.find({}, function(err, data) {
+    if (err) res.status(404).send();
+    console.log(data);
+    res.status(200).send(data);
+  }).sort({
+    points: -1
+  }).limit(10);
 };
 
 
 
 module.exports = {
-	signin: signin,
-	signup: signup,
-	submitSolution: submitSolution,
-	getSolutions: getSolutions,
-	leaderboard: leaderboard,
-	getUserData: getUserData,
-	upVote: upVote
+  signin: signin,
+  signup: signup,
+  submitSolution: submitSolution,
+  getSolutions: getSolutions,
+  leaderboard: leaderboard,
+  getUserData: getUserData,
+  upVote: upVote
 };

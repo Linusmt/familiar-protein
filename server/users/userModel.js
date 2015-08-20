@@ -10,7 +10,7 @@ var UserSchema = new mongoose.Schema({
     solution: String,
     points: [Number, String],
     votes: Number,
-    time: Number
+    time: String
   }]
 });
 
