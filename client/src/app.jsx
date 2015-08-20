@@ -76,7 +76,7 @@ var App = React.createClass({
             </li>
             <li>Signed in as: {this.state.username}  </li>
             <li>
-              <Link to='overview'>Profile</Link>
+              <Link to='profile'>Profile</Link>
             </li>
             <li>
               <Link to='questions'>Questions</Link>
@@ -86,6 +86,9 @@ var App = React.createClass({
             </li>
             <li>
               <Link to='tutorial'>Regex Cheatsheet</Link>
+            </li>
+             <li>
+              {this.state.loggedIn ? <Link onClick={this.onLogout} to='signin'>Logout</Link> : <Link to='signin'>Signin</Link> }
             </li>
           </ul>
         </div>
@@ -104,6 +107,8 @@ var routes = (
     <Route name="questions" path= "/questions" handler={QuestionsView}/>
     <Route name="signin" path= "/signin" handler = {SignInView}/>
     <Route name="signup" path= "/signup" handler = {SignUpView}/>
+    <Route name="profile" path= "/profile" handler = {ProfileView}/>
+
     <Route name="leaderboard" path= "leaderboard" handler= {LeaderBoardView}/>
     <DefaultRoute name="default" handler={SignInView} />
 
