@@ -5,7 +5,7 @@ var DetailView = require('./views/DetailView.jsx');
 var SignInView = require('./views/SignInView.jsx');
 var SignUpView = require('./views/SignUpView.jsx');
 var TutorialView = require('./views/RegexTutorialView.jsx');
-var SolutionView = require('./views/SolutionView.jsx')
+var SolutionView = require('./views/SolutionView.jsx');
 var LeaderBoardView = require('./views/LeaderBoardView.jsx');
 
 var Router = require('react-router');
@@ -15,14 +15,31 @@ var Route = Router.Route;
 var Link = Router.Link;
 var Navigation = Router.Navigation;
 
+var cookie = require('react-cookie');
 
 var App = React.createClass({
   mixins: [Navigation],
 
   getInitialState: function(){
     return {
-      questions: []
+      questions: [],
+      username: cookie.load('username'),
+      loggedIn: true
     };
+  },
+
+  onLogIn: function(status) {
+    console.log(status);
+    this.setState({
+      loggedIn: status
+    });
+  },
+
+  onLogout: function() {
+    cookie.remove('username');
+    this.setState({
+      loggedIn: cookie.load('username')
+    });
   },
 
   loadAllQuestions: function(){
@@ -47,16 +64,17 @@ var App = React.createClass({
   },
 
   render: function() {
+
     return (
       <div id='wrapper'>
-
         <div id='sidebar-wrapper'>
           <ul className='sidebar-nav'>
             <li className='sidebar-brand'>
               <Link to='default'>Regex Game</Link>
             </li>
+            <li>Signed in as: {this.state.username}  </li>
             <li>
-              <Link to='default'>Questions</Link>
+              <Link to='overview'>Questions</Link>
             </li>
             <li>
               <Link to='default'>Profile</Link>
@@ -71,12 +89,15 @@ var App = React.createClass({
               <Link to='tutorial'>Regex Cheatsheet</Link>
             </li>
             <li>
-              <Link to='signin'>Signin</Link>
+              {!this.state.loggedIn ? <Link to='signin'>Signin</Link> : null}
+            </li>
+            <li>
+              {this.state.loggedIn ? <Link onClick={this.onLogout} to='signin'>Logout</Link> : null}
             </li>
           </ul>
       
         </div>
-        <RouteHandler questions={this.state.questions}/>
+        <RouteHandler questions={this.state.questions} logStatus={this.onLogIn}/>
       </div>
     )
   }
@@ -91,7 +112,8 @@ var routes = (
     <Route name="overview" path= "/profile" handler={OverView}/>
     <Route name="signin" path= "/signin" handler = {SignInView}/>
     <Route name="signup" path= "/signup" handler = {SignUpView}/>
-    <Route name="leaderboard" path= "leaderboard" handler= {LeaderBoardView}/>    <DefaultRoute name="default" handler={OverView} />
+    <Route name="leaderboard" path= "leaderboard" handler= {LeaderBoardView}/>
+    <DefaultRoute name="default" handler={SignInView} />
   </Route>
 );
 

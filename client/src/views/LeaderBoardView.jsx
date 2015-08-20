@@ -29,18 +29,17 @@ var LeaderBoardView = React.createClass({
 		});
 	},
 
-
-
 	render: function(){
 
 
 		//Scores should be returned as an array with each element being an object
 		//The object should hold the username and the score
 		var scores = this.state.scores.map(function(score){
+			console.log(score);
 			return (
 				<tr key={score.username} className="question">
 					<td><b>{score.username}</b></td>
-					<td><b>{score.totalScore}</b></td>
+					<td><b>{score.points}</b></td>
 				</tr>
 			)
 		});

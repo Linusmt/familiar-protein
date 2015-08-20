@@ -49,8 +49,6 @@ var signup = function(req, res) {
             points: Math.floor(Math.random()*1000),
             questionSolved: []
         });
-
-
       user.save(function(err, result) {
         if (err) res.status(404).send();
         res.cookie('username', result.username);
@@ -69,7 +67,8 @@ var submitSolution = function(req, res) {
         "questionSolved": {
           "qNumber": req.body.qNumber,
           "solved": true,
-          "solution": req.body.solution
+          "solution": req.body.solution,
+          "time": req.body.time
         }
       },
       $inc: {
@@ -122,13 +121,12 @@ var upVote = function(req, res) {
       });
 };
 
-
 var leaderboard = function(req, res){
 	User.find({}, function(err, data){
 		if(err) res.status(404).send();
 		console.log(data);
 		res.status(200).send(data);
-	}).sort({totalScore:-1}).limit(10);
+	}).sort({points:-1}).limit(10);
 };
 
 

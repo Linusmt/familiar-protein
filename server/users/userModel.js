@@ -7,9 +7,10 @@ var UserSchema = new mongoose.Schema({
   questionSolved: [{
     qNumber: Number,
     solved: Boolean,
-    solution: String, 
+    solution: String,
     points: [Number, String],
-    votes: Number
+    votes: Number,
+    time: Number
   }]
 });
 
