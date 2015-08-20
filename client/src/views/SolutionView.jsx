@@ -130,9 +130,7 @@ var SolutionView = React.createClass({
                 <Link to="questions" className="btn btn-primary back">Back</Link>
                 {!hasSolvedNextQuestion ? <Link to="question" params={{qNumber:nextQuestion}} className="btn btn-primary">Next Question</Link>: <Link to="solution" params={{qNumber:nextQuestion}} className="btn btn-success">Next Solution</Link>}
               </div>
-            </div>
-
-            <div className="row">
+       
               <div className="col-sm-12">
                 <h4>Your Solution:</h4>
                 <p>{solution}</p>

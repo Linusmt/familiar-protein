@@ -24585,10 +24585,8 @@
 	              React.createElement("div", {className: "col-sm-2"}, 
 	                React.createElement(Link, {to: "questions", className: "btn btn-primary back"}, "Back"), 
 	                !hasSolvedNextQuestion ? React.createElement(Link, {to: "question", params: {qNumber:nextQuestion}, className: "btn btn-primary"}, "Next Question"): React.createElement(Link, {to: "solution", params: {qNumber:nextQuestion}, className: "btn btn-success"}, "Next Solution")
-	              )
-	            ), 
-
-	            React.createElement("div", {className: "row"}, 
+	              ), 
+	       
 	              React.createElement("div", {className: "col-sm-12"}, 
 	                React.createElement("h4", null, "Your Solution:"), 
 	                React.createElement("p", null, solution), 
