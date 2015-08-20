@@ -129,6 +129,18 @@ var DetailView = React.createClass({
 
   render: function() {
     var question = this.props.questions[this.props.params.qNumber - 1];
+    var nextQuestion = 0;
+    var hasSolvedNextQuestion = false;
+    if (question.qNumber === this.props.questions.length) {
+      nextQuestion = 1;
+    } else {
+      nextQuestion = question.qNumber+1
+    }
+    for (var i = 0; i < this.props.userData.questionSolved.length;i++) {
+      if (this.props.userData.questionSolved[i].qNumber === nextQuestion) {
+        hasSolvedNextQuestion = true;
+      }    
+    }
 
     if (this.props.questions.length > 0 && question === undefined) {
       this.transitionTo('/');
@@ -145,11 +157,12 @@ var DetailView = React.createClass({
       <div id='page-content-wrapper'>
         <div className='container-fluid'>
           <div className="row">
-            <div className="col-lg-11">            
+            <div className="col-lg-10">            
               <h2>{question.title}<span className="points">Points: {question.points}</span></h2>
             </div>
-            <div className="col-lg-1">
+            <div className="col-lg-2">
               <Link to="questions" className="btn btn-primary back">Back</Link>
+              {!hasSolvedNextQuestion ? <Link to="question" params={{qNumber:nextQuestion}} className="btn btn-primary">Next Question</Link>: <Link to="solution" params={{qNumber:nextQuestion}} className="btn btn-success">Next Solution</Link>}
             </div>
           </div>
 
