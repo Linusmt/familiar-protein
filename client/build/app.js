@@ -70,13 +70,14 @@
 	    return {
 	      questions: [],
 	      username: cookie.load('username'),
-	      loggedIn: true
+	      loggedIn: cookie.load('username')
 	    };
 	  },
 
 	  onLogIn: function(status) {
-	    console.log(status);
+	    console.log(cookie.load('username'));
 	    this.setState({
+	      username: cookie.load('username'),
 	      loggedIn: status
 	    });
 	  },
@@ -84,6 +85,7 @@
 	  onLogout: function() {
 	    cookie.remove('username');
 	    this.setState({
+	      username: '',
 	      loggedIn: cookie.load('username')
 	    });
 	  },
@@ -23926,26 +23928,27 @@
 
 	var Timer = React.createClass({displayName: "Timer",
 	  getInitialState: function() {
-	    return {secondsElapsed: 0};
+	    return {
+	      secondsElapsed: 0,
+	      time: ''
+	    };
 	  },
 	  tick: function() {
 	    if(this.props.stop === true) {
 	      clearInterval(this.interval);  
 	    } else {
-	      this.setState({secondsElapsed: this.state.secondsElapsed + 1});
-	      this.props.callbackParent(this.state.secondsElapsed); // notify detailView that there is a change in time
+	      this.setState({
+	        secondsElapsed: this.state.secondsElapsed + 1
+	      });
+	      this.setState({
+	        time: this.stringifyTime(this.state.secondsElapsed)
+	      });
+	      this.props.callbackParent(this.state.time); // notify detailView that there is a change in time
 	    }
 	  },
-	  componentDidMount: function() {
-	    this.interval = setInterval(this.tick, 1000);
-	      },
-	  componentWillUnmount: function() {
-	    clearInterval(this.interval);
-	  },
-	  render: function() {
+	  stringifyTime: function(seconds) {
 	    var time = new Date(0);
-	    time.setSeconds(this.state.secondsElapsed);
-
+	    time.setSeconds(seconds);
 	    var minutes = time.getMinutes();
 	    var seconds = time.getSeconds();
 
@@ -23956,8 +23959,17 @@
 	      seconds = '0'+ seconds;
 	    }
 
+	    return minutes+':'+seconds;
+	  },
+	  componentDidMount: function() {
+	    this.interval = setInterval(this.tick, 1000);
+	  },
+	  componentWillUnmount: function() {
+	    clearInterval(this.interval);
+	  },
+	  render: function() {
 	    return (
-	      React.createElement("div", null, "Time Elapsed: ", minutes, ":", seconds)
+	      React.createElement("div", null, "Time Elapsed: ", this.state.time)
 	    );
 	  }
 	});
@@ -24508,6 +24520,7 @@
 	          React.createElement("tr", null, 
 	            React.createElement("td", null, React.createElement("p", null, "User: ", user.username)), 
 	            React.createElement("td", null, React.createElement("p", null, "Solution: ", userSolution.solution)), 
+	            React.createElement("td", null, React.createElement("p", null, "Time Elasped: ", userSolution.time)), 
 	            React.createElement("td", null, React.createElement("p", null, "Votes: ", userSolution.votes)), 
 	            React.createElement("td", null, React.createElement("p", null, React.createElement("button", {onClick: this.upVote.bind(this, index), ref: index, className: "btn btn-primary"}, "Vote")))
 	          )
@@ -24536,7 +24549,7 @@
 	            React.createElement("div", {className: "col-sm-12"}, 
 	              React.createElement("h4", null, "Your Solution:"), 
 	              React.createElement("p", null, solution), 
-	              React.createElement("p", null, "Time taken: ", React.createElement("span", {className: "time"}, time)), 
+	              React.createElement("p", null, "Time Elapsed: ", React.createElement("span", {className: "time"}, time)), 
 	              React.createElement("h4", null, "Other solutions:"), 
 	              React.createElement("table", {className: "questionContainer table table-hover"}, 
 	                React.createElement("tbody", null, 

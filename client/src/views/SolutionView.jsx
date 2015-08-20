@@ -95,6 +95,7 @@ var SolutionView = React.createClass({
           <tr>
             <td><p>User: {user.username}</p></td>
             <td><p>Solution: {userSolution.solution}</p></td>
+            <td><p>Time Elasped: {userSolution.time}</p></td>
             <td><p>Votes: {userSolution.votes}</p></td>
             <td><p><button onClick={this.upVote.bind(this, index)} ref={index} className="btn btn-primary">Vote</button></p></td>
           </tr>
@@ -123,7 +124,7 @@ var SolutionView = React.createClass({
             <div className="col-sm-12">
               <h4>Your Solution:</h4>
               <p>{solution}</p>
-              <p>Time taken: <span className="time">{time}</span></p>
+              <p>Time Elapsed: <span className="time">{time}</span></p>
               <h4>Other solutions:</h4>
               <table className="questionContainer table table-hover">
                 <tbody>

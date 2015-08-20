@@ -24,13 +24,14 @@ var App = React.createClass({
     return {
       questions: [],
       username: cookie.load('username'),
-      loggedIn: true
+      loggedIn: cookie.load('username')
     };
   },
 
   onLogIn: function(status) {
-    console.log(status);
+    console.log(cookie.load('username'));
     this.setState({
+      username: cookie.load('username'),
       loggedIn: status
     });
   },
@@ -38,6 +39,7 @@ var App = React.createClass({
   onLogout: function() {
     cookie.remove('username');
     this.setState({
+      username: '',
       loggedIn: cookie.load('username')
     });
   },
