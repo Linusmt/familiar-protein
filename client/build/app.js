@@ -53,6 +53,7 @@
 	var TutorialView = __webpack_require__(202);
 	var SolutionView = __webpack_require__(203);
 	var LeaderBoardView = __webpack_require__(204);
+	var ProfileView = __webpack_require__(206);
 
 	var Router = __webpack_require__(158);
 	var RouteHandler = Router.RouteHandler;
@@ -117,11 +118,11 @@
 	        React.createElement("div", {id: "sidebar-wrapper"}, 
 	          React.createElement("ul", {className: "sidebar-nav"}, 
 	            React.createElement("li", {className: "sidebar-brand"}, 
-	              React.createElement(Link, {to: "default"}, "Regex Game")
+	              React.createElement(Link, {to: "questions"}, "Regex Game")
 	            ), 
 	            React.createElement("li", null, "Signed in as: ", this.state.username, "  "), 
 	            React.createElement("li", null, 
-	              React.createElement(Link, {to: "default"}, "Profile")
+	              React.createElement(Link, {to: "profile"}, "Profile")
 	            ), 
 	            React.createElement("li", null, 
 	              React.createElement(Link, {to: "questions"}, "Questions")
@@ -132,11 +133,10 @@
 	            React.createElement("li", null, 
 	              React.createElement(Link, {to: "tutorial"}, "Regex Cheatsheet")
 	            ), 
-	            React.createElement("li", null, 
+	             React.createElement("li", null, 
 	              this.state.loggedIn ? React.createElement(Link, {onClick: this.onLogout, to: "signin"}, "Logout") : React.createElement(Link, {to: "signin"}, "Signin")
 	            )
 	          )
-	      
 	        ), 
 	        React.createElement(RouteHandler, {loggedIn: this.state.loggedIn, questions: this.state.questions, logStatus: this.onLogIn})
 	      )
@@ -153,8 +153,12 @@
 	    React.createElement(Route, {name: "questions", path: "/questions", handler: QuestionsView}), 
 	    React.createElement(Route, {name: "signin", path: "/signin", handler: SignInView}), 
 	    React.createElement(Route, {name: "signup", path: "/signup", handler: SignUpView}), 
+	    React.createElement(Route, {name: "profile", path: "/profile", handler: ProfileView}), 
+
 	    React.createElement(Route, {name: "leaderboard", path: "leaderboard", handler: LeaderBoardView}), 
-	    React.createElement(DefaultRoute, {name: "default", handler: SignInView})
+	    React.createElement(DefaultRoute, {name: "default", handler: QuestionsView})
+
+
 	  )
 	);
 
@@ -24038,13 +24042,16 @@
 					  React.createElement("div", {className: "form-group"}, 
 					    React.createElement("label", {className: "col-sm-2 control-label"}, "Username"), 
 					    React.createElement("div", {className: "col-sm-10"}, 
+
 					      React.createElement("input", {ref: "username", className: "form-control", placeholder: "Username"})
+
 					    )
 					  ), 
 					  React.createElement("div", {className: "form-group"}, 
 					    React.createElement("label", {className: "col-sm-2 control-label"}, "Password"), 
 					    React.createElement("div", {className: "col-sm-10"}, 
 					      React.createElement("input", {ref: "password", type: "password", className: "form-control", placeholder: "Password"})
+
 					    )
 					  ), 
 					  React.createElement("div", {className: "form-group"}, 
@@ -24306,7 +24313,7 @@
 				contentType: "application/json",
 				dataType: 'json',
 				success: function(data){
-					that.transitionTo('questions');
+					that.transitionTo('signin');
 				},
 				error: function(xhr, status, err){
 					alert( xhr.responseText);
@@ -24331,12 +24338,14 @@
 					    React.createElement("label", {className: "col-sm-2 control-label"}, "Username"), 
 					    React.createElement("div", {className: "col-sm-10"}, 
 					      React.createElement("input", {ref: "username", className: "form-control", placeholder: "Username"})
+
 					    )
 					  ), 
 					  React.createElement("div", {className: "form-group"}, 
 					    React.createElement("label", {className: "col-sm-2 control-label"}, "Password"), 
 					    React.createElement("div", {className: "col-sm-10"}, 
 					      React.createElement("input", {ref: "password", type: "password", className: "form-control", placeholder: "Password"})
+
 					    )
 					  ), 
 					  React.createElement("div", {className: "form-group"}, 
@@ -24522,7 +24531,8 @@
 	      }
 
 	      return (
-	        React.createElement("div", {className: "question-solve"}, 
+	        React.createElement("div", {id: "page-content-wrapper"}, 
+	          React.createElement("div", {className: "container-fluid"}, 
 	          React.createElement("div", {className: "row"}, 
 	            React.createElement("div", {className: "col-sm-10"}, 
 	              React.createElement("h2", null, question.title, " ", React.createElement("span", {className: "points"}, "Points: ", question.points)), 
@@ -24545,6 +24555,7 @@
 	            )
 	          )
 	        )
+	        )
 	      )
 	    } else {
 	      return (React.createElement("div", null, "loading"))
@@ -24565,7 +24576,7 @@
 	var Link = Router.Link;
 
 	var LeaderBoardView = React.createClass({displayName: "LeaderBoardView",
-		mixis: [Navigation],
+		mixins: [Navigation],
 
 		getInitialState: function(){
 			return {
@@ -24591,8 +24602,6 @@
 		},
 
 		render: function(){
-
-
 			//Scores should be returned as an array with each element being an object
 			//The object should hold the username and the score
 			var counter = 0;
@@ -24608,21 +24617,117 @@
 			});
 
 			return (
+
 				React.createElement("div", {id: "page-content-wrapper"}, 
 	        React.createElement("div", {className: "container-fluid"}, 
-						React.createElement("h2", null, " Leaderboard "), 
-						React.createElement("table", {className: "questionContainer table table-hover"}, 
-							React.createElement("tbody", null, 
-								scores
-							)
+					React.createElement("h2", null, " Leaderboard "), 
+					React.createElement("table", {className: "questionContainer table table-hover"}, 
+						React.createElement("tbody", null, 
+							scores
 						)
-					)	
+					)
+				)
 				)
 			)
 		}
 	});
 
 	module.exports = LeaderBoardView;
+
+/***/ },
+/* 205 */,
+/* 206 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var Router = __webpack_require__(158);
+	var Navigation = Router.Navigation;
+	var Link = Router.Link;
+
+	var cookie = __webpack_require__(199)
+
+	var ProfileView = React.createClass({displayName: "ProfileView", 
+	  mixins: [Navigation],
+
+	  getInitialState: function(){ 
+	    return { 
+	      user: {
+	        username: null, 
+	        points: null, 
+	        questionSolved: [{
+	          qNumber: null,
+	          solved: null, 
+	          solution: null, 
+	          points: [], 
+	          votes: null
+	        }]  
+	      }
+	    }
+	  },
+
+	  getUserData: function() {
+	    $.ajax({
+	      url: window.location.origin + '/getUserData',
+	      dataType: 'json',
+	      method: 'GET',
+	      success: function(data) {
+	        this.setState({user: data});
+	      }.bind(this),
+	      error: function(xhr, status, err) {
+	        console.error(this.props.url, status, err.toString());
+	      }.bind(this)
+	    });
+	  },
+
+	  componentDidMount: function(){ 
+	    this.getUserData()
+	  },  
+
+	  render: function(){ 
+	    if(this.props.questions.length > 0 && this.state.user.username){
+	      var solutions = this.state.user.questionSolved.map(function(index){ 
+	        var questionTitle = this.props.questions[index.qNumber -1].title
+	        return ( 
+	            React.createElement("tr", null, 
+	              React.createElement("td", null, questionTitle), 
+	              React.createElement("td", null, index.solution), 
+	              React.createElement("td", null, index.time), 
+	              React.createElement("td", null, index.votes)
+	            )
+	          )
+
+	      }, this)
+	      return(
+	        React.createElement("div", {id: "page-content-wrapper"}, 
+	          React.createElement("div", {className: "container-fluid"}, 
+	          React.createElement("h2", null, this.state.user.username), 
+	          React.createElement("h4", null, "Points: ", this.state.user.points), 
+	          React.createElement("table", {className: "questionContainer table table-hover"}, 
+	          React.createElement("thead", null, 
+	            React.createElement("tr", null, 
+	              React.createElement("th", null, "Question"), 
+	              React.createElement("th", null, "Solution"), 
+	              React.createElement("th", null, "Time Elasped"), 
+	              React.createElement("th", null, "Votes")
+	            )
+	          ), 
+	            React.createElement("tbody", null, 
+	              solutions
+	            )
+	          )
+	        )
+	      )
+	        )
+	    } else { 
+	      return ( 
+	        React.createElement("div", null, "Loading...")
+	        )
+	    }
+	  }
+
+	});
+
+	module.exports = ProfileView;
 
 /***/ }
 /******/ ]);
