@@ -177,6 +177,7 @@
 	    React.createElement(DefaultRoute, {name: "default", handler: QuestionsView})
 
 
+
 	  )
 	);
 
@@ -24568,7 +24569,8 @@
 				dataType: 'json',
 				success: function(data){
 					if(this.isMounted()){
-						that.setState({scores:data});
+						that.setState({data:data});
+						that.setState({scores:data.points});
 					}
 				}.bind(this),
 				error: function(xhr, status, err){
@@ -24577,6 +24579,12 @@
 			});
 		},
 
+
+
+		handleChange: function(e){
+			var selected = React.findDOMNode(this.refs.leaderDrop).value;
+			this.setState({scores:this.state.data[selected]});
+		},
 		render: function(){
 			//Scores should be returned as an array with each element being an object
 			//The object should hold the username and the score
@@ -24587,7 +24595,9 @@
 					React.createElement("tr", {key: score.username, className: "question"}, 
 						React.createElement("td", null, React.createElement("b", null, counter)), 
 						React.createElement("td", null, React.createElement("b", null, score.username)), 
-						React.createElement("td", null, React.createElement("b", null, score.points))
+						React.createElement("td", null, React.createElement("b", null, score.points)), 
+						React.createElement("td", null, React.createElement("b", null, score.questionsSolved)), 
+						React.createElement("td", null, React.createElement("b", null, score.totalVotes))
 					)
 				)
 			});
@@ -24597,8 +24607,22 @@
 				React.createElement("div", {id: "page-content-wrapper"}, 
 	        React.createElement("div", {className: "container-fluid"}, 
 					React.createElement("h2", null, " Leaderboard "), 
+				
+
+					React.createElement("select", {ref: "leaderDrop", onChange: this.handleChange}, 
+						  React.createElement("option", {value: "points"}, "Points"), 
+			  			React.createElement("option", {value: "upvotes"}, "Upvotes"), 
+			  			React.createElement("option", {value: "solved"}, "Solved")
+					), 
+
 					React.createElement("table", {className: "questionContainer table table-hover"}, 
 						React.createElement("tbody", null, 
+							React.createElement("tr", null, 
+								React.createElement("td", null, React.createElement("b", null, "Username")), 
+								React.createElement("td", null, React.createElement("b", null, "Points")), 
+								React.createElement("td", null, React.createElement("b", null, "Questions Solved")), 
+								React.createElement("td", null, React.createElement("b", null, "Upvotes"))
+							), 
 							scores
 						)
 					)

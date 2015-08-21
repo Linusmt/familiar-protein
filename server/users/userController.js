@@ -145,14 +145,93 @@ var upVote = function(req, res) {
 };
 
 
+var sortSolved = function(a, b) {
+  return b.questionSolved.length - a.questionSolved.length;
+};
+
+var sortPoints = function(a, b) {
+  return b.points - a.points;
+
+};
+
+var sortUpvotes = function(a, b) {
+  var aupvotes = 0;
+  var bupvotes = 0;
+
+  for (var i = 0; i < a.questionSolved.length; i++) {
+    aupvotes += a.questionSolved[i].votes;
+  }
+
+  for (var j = 0; j < b.questionSolved.length; j++) {
+    bupvotes += b.questionSolved[j].votes;
+  }
+  return bupvotes - aupvotes;
+};
+
+
+/* function: addUpVoteProperties
+ * -----------------------------
+ * This function takes in an array and acts as a decorator function. It counts
+ * the total number of votes across all the questions and adds a totalVotes property
+ * to each of the individual objects. 
+ * PLEASE IGNORE THE SKETCHINESS......
+ */
+var addUpvoteProperties = function(personArray) {
+  var newArray = [];
+  for (var i = 0; i < personArray.length; i++) {
+
+    var upVotes = 0;
+
+    for (var j = 0; j < personArray[i].questionSolved.length; j++) {
+      upVotes += personArray[i].questionSolved[j].votes;
+    }
+    if (!upVotes) upVotes = 0;
+    var newObj = {
+      questionsSolved: personArray[i].questionSolved.length,
+      points: personArray[i].points,
+      username: personArray[i].username,
+      totalVotes: upVotes
+    };
+
+    newArray.push(newObj);
+  }
+
+  return newArray;
+
+};
+
+
+var findLeaders = function(data) {
+  var leaders = {};
+
+  data.sort(sortPoints);
+  leaders.points = data.slice(0, 10);
+  leaders.points = addUpvoteProperties(leaders.points);
+
+  data.sort(sortUpvotes);
+  leaders.upvotes = data.slice(0, 10);
+  leaders.upvotes = addUpvoteProperties(leaders.upvotes);
+
+  data.sort(sortSolved);
+  leaders.solved = data.slice(0, 10);
+  leaders.solved = addUpvoteProperties(leaders.solved);
+
+  return leaders;
+
+};
+/* function: leaderboard
+ * ---------------------
+ * This function returns the data needed for the leaderboard. It does this by searching 
+ * the mongo database for all the users data, and then returns the top 10 users who:
+ * solved the most questions, have the most points, or have the most upvotes. It returns 
+ * an object with three arrays for these categories.
+ */
 var leaderboard = function(req, res) {
   User.find({}, function(err, data) {
     if (err) res.status(404).send();
-    console.log(data);
-    res.status(200).send(data);
-  }).sort({
-    points: -1
-  }).limit(10);
+    var leaders = findLeaders(data);
+    res.status(200).send(leaders);
+  });
 };
 
 

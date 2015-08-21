@@ -10,7 +10,7 @@ module.exports = function(grunt) {
       }
     },
     watch: {
-      files: ['<%= jshint.files %>'],
+      files: ['<%= jshint.files %>', 'client/src/**/*.jsx'],
       tasks: ['default']
     },
 
@@ -54,7 +54,7 @@ module.exports = function(grunt) {
           braceStyle: "collapse",
           indentChar: " ",
           indentScripts: "keep",
-          indentSize: 4,
+          indentSize: 2,
           maxPreserveNewlines: 10,
           preserveNewlines: true,
           unformatted: ["a", "sub", "sup", "b", "i", "u"],
